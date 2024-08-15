@@ -1,0 +1,51 @@
+﻿@model IEnumerable<City>
+
+<div class="container">
+    <div class="row py-4">
+        <div class="col-6">
+            <h2 class="text-primary">City List</h2>
+        </div>
+
+        <div class="col-6 text-end">
+            <a asp-controller="City" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i>
+                Create New City
+            </a>
+        </div>
+
+    </div>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>
+                    City Id
+                </th>
+                <th>
+                    City Name
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var city in Model)
+            {
+                <tr>
+                    <td>@city.CityId</td>
+                    <th>@city.Name</th>
+                    <td class="text-end w-25 p-0 align-content-center">
+                        <div class="btn-group" style="min-width: 150px;">
+                            <a asp-controller="City" asp-action="Edit" asp-route-id="@city.CityId" class="btn btn-primary">
+                                <i class="bi bi-pencil"></i>
+                                Edit
+                            </a>
+                            <a asp-controller="City" asp-action="Delete" asp-route-id="@city.CityId" class="btn btn-danger">
+                                <i class="bi bi-trash"></i>
+                                Delete
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

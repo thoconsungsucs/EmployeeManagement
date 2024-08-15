@@ -1,0 +1,36 @@
+﻿@model City
+<div class="card mt-5 shadow border-0 rounded-3">
+
+    <div class="card-header border-0 p-0 rounded-top-3 bg-primary p-4">
+        <div class="text-center align-content-center">
+            <h2 class="text-primary m-0 text-white">Edit City </h2>
+        </div>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <input asp-for="CityId" hidden />
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control p-2" placeholder="Enter City Name">
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-6 col-md-4">
+                    <button type="submit" class="btn btn-primary form-control">
+                        Edit
+                    </button>
+                </div>
+                <div class="col-6 col-md-4">
+                    <a asp-controller="City" asp-action="Index" class="btn btn-outline-secondary form-control">Back To List</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
