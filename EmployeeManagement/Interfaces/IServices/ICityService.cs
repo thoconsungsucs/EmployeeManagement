@@ -1,5 +1,6 @@
 ﻿using EmployeeManagement.Models;
 using EmployeeManagement.Ultilities;
+using FluentValidation.Results;
 
 namespace EmployeeManagement.Interfaces.IServices
 {
@@ -7,8 +8,8 @@ namespace EmployeeManagement.Interfaces.IServices
     {
         Task<IEnumerable<City>> GetAllAsync(CityFilter cityFilter = null);
         Task<City> GetByIdAsync(int id);
-        Task<City> AddAsync(City entity);
-        Task<City> UpdateAsync(City entity);
+        Task<ValidationResult> AddAsync(City entity);
+        Task<ValidationResult> UpdateAsync(City entity);
         Task<City> DeleteAsync(City entity);
     }
 }

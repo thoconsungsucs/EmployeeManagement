@@ -1,6 +1,7 @@
 ﻿using EmployeeManagement.DataAccess.Data;
 using EmployeeManagement.Interfaces.IRepositories;
 using EmployeeManagement.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagement.Repositories
 {
@@ -10,6 +11,11 @@ namespace EmployeeManagement.Repositories
         public CityRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
+        }
+
+        public async Task<bool> IsCityExists(string name)
+        {
+            return await _context.Cities.AnyAsync(c => c.Name.ToLower() == name.ToLower());
         }
     }
 }

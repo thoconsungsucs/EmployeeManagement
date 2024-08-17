@@ -1,9 +1,10 @@
 using EmployeeManagement.DataAccess.Data;
 using EmployeeManagement.Interfaces.IRepositories;
 using EmployeeManagement.Interfaces.IServices;
-using EmployeeManagement.Models;
 using EmployeeManagement.Repositories;
 using EmployeeManagement.Services;
+using EmployeeManagement.Validation;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagement
@@ -19,7 +20,9 @@ namespace EmployeeManagement
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddScoped(typeof(IRepository<City>), typeof(Repository<City>));
+            builder.Services.AddValidatorsFromAssemblyContaining<CityValidator>();
+
+            builder.Services.AddScoped(typeof(ICityRepository), typeof(CityRepository));
             builder.Services.AddScoped<ICityService, CityService>();
             var app = builder.Build();
 

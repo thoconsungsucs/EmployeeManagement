@@ -2,15 +2,19 @@
 using EmployeeManagement.Interfaces.IServices;
 using EmployeeManagement.Models;
 using EmployeeManagement.Ultilities;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeManagement.Services
 {
     public class CityService : ICityService
     {
-        private readonly IRepository<City> _cityRepository;
-        public CityService(IRepository<City> cityRepository)
+        private readonly ICityRepository _cityRepository;
+        private readonly IValidator<City> _cityValidator;
+        public CityService(ICityRepository cityRepository, IValidator<City> cityValiadtor)
         {
+            _cityValidator = cityValiadtor;
             _cityRepository = cityRepository;
         }
         public async Task<IEnumerable<City>> GetAllAsync(CityFilter cityFilter = null)
@@ -34,11 +38,16 @@ namespace EmployeeManagement.Services
             return await _cityRepository.GetByIdAsync(id);
         }
 
-        public async Task<City> AddAsync(City city)
+        public async Task<ValidationResult> AddAsync(City city)
         {
+            var validationResult = await _cityValidator.ValidateAsync(city);
+            if (!validationResult.IsValid)
+            {
+                return validationResult;
+            }
             await _cityRepository.AddAsync(city);
             await _cityRepository.SaveAsync();
-            return city;
+            return validationResult;
         }
 
         public async Task<City> DeleteAsync(City city)
@@ -49,11 +58,16 @@ namespace EmployeeManagement.Services
         }
 
 
-        public async Task<City> UpdateAsync(City entity)
+        public async Task<ValidationResult> UpdateAsync(City city)
         {
-            _cityRepository.Update(entity);
+            var validationResult = await _cityValidator.ValidateAsync(city);
+            if (!validationResult.IsValid)
+            {
+                return validationResult;
+            }
+            _cityRepository.Update(city);
             await _cityRepository.SaveAsync();
-            return entity;
+            return validationResult;
         }
     }
 }

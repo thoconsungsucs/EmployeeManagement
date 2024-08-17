@@ -30,7 +30,12 @@ namespace EmployeeManagement.Controllers
             {
                 return View(city);
             }
-            await _cityService.AddAsync(city);
+            var result = await _cityService.AddAsync(city);
+            if (!result.IsValid)
+            {
+                result.AddToModelState(this.ModelState);
+                return View(nameof(Create), city);
+            }
             return RedirectToAction("Index");
         }
 
@@ -47,6 +52,12 @@ namespace EmployeeManagement.Controllers
             if (!ModelState.IsValid)
             {
                 return View(city);
+            }
+            var result = await _cityService.UpdateAsync(city);
+            if (!result.IsValid)
+            {
+                result.AddToModelState(this.ModelState);
+                return View(nameof(Edit), city);
             }
             await _cityService.UpdateAsync(city);
             return RedirectToAction("Index");
