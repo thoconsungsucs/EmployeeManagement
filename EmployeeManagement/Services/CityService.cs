@@ -17,25 +17,25 @@ namespace EmployeeManagement.Services
             _cityValidator = cityValiadtor;
             _cityRepository = cityRepository;
         }
-        public async Task<IEnumerable<City>> GetAllAsync(CityFilter cityFilter = null)
+        public async Task<IEnumerable<City>> GetAllAsync(Filter filter = null)
         {
             var cities = _cityRepository.GetAllAsync();
-            if (cityFilter == null)
+            if (filter == null)
             {
                 return await cities.ToArrayAsync();
             }
-            if (!string.IsNullOrEmpty(cityFilter.Name))
+            if (!string.IsNullOrEmpty(filter.Name))
             {
-                cities = cities.Where(c => c.Name.Contains(cityFilter.Name));
+                cities = cities.Where(c => c.Name.Contains(filter.Name));
             }
-            return await cities.Take(cityFilter.PageSize)
-                .Skip(cityFilter.PageSize * (cityFilter.PageNumber - 1))
+            return await cities.Take(filter.PageSize)
+                .Skip(filter.PageSize * (filter.PageNumber - 1))
                 .ToArrayAsync();
         }
 
         public async Task<City> GetByIdAsync(int id)
         {
-            return await _cityRepository.GetByIdAsync(id);
+            return await _cityRepository.GetAsync(e => e.CityId == id);
         }
 
         public async Task<ValidationResult> AddAsync(City city)

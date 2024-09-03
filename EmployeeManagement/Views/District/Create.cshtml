@@ -1,29 +1,36 @@
-﻿@model City
+﻿@model DistrictVM
 <div class="card mt-5 shadow border-0 rounded-3">
 
     <div class="card-header border-0 p-0 rounded-top-3 bg-primary p-4">
         <div class="text-center align-content-center">
-            <h2 class="text-primary m-0 text-white">Create City </h2>
+            <h2 class="text-primary m-0 text-white">Create District </h2>
         </div>
     </div>
     <div class="card-body">
         <form method="post">
             <div class="mb-3">
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control p-2" placeholder="Enter City Name">
+                <label asp-for="District.Name" class="form-label"></label>
+                <input asp-for="District.Name" class="form-control p-2" placeholder="Enter District Name">
             </div>
 
+            <div class="mb-3">
+                <label asp-for="District.CityId" class="form-label">District Name</label>
+                <select asp-for="District.CityId" asp-items="Model.Cities" class="form-control p-2">
+                    <option disabled selected>--Select City--</option>
+                </select>
+            </div>
+            
             @* Display error *@
             <div asp-validation-summary="All" class="text-danger"></div>
 
             <div class="row mt-4">
                 <div class="col-6 col-md-4">
                     <button type="submit" class="btn btn-primary form-control">
-                       Create
+                        Create
                     </button>
                 </div>
                 <div class="col-6 col-md-4">
-                    <a asp-controller="City" asp-action="Index" class="btn btn-outline-secondary form-control">Back To List</a>
+                    <a asp-controller="District" asp-action="Index" class="btn btn-outline-secondary form-control">Back To List</a>
                 </div>
             </div>
         </form>

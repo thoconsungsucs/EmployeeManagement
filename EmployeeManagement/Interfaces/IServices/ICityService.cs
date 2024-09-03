@@ -6,7 +6,7 @@ namespace EmployeeManagement.Interfaces.IServices
 {
     public interface ICityService
     {
-        Task<IEnumerable<City>> GetAllAsync(CityFilter cityFilter = null);
+        Task<IEnumerable<City>> GetAllAsync(Filter filter = null);
         Task<City> GetByIdAsync(int id);
         Task<ValidationResult> AddAsync(City entity);
         Task<ValidationResult> UpdateAsync(City entity);

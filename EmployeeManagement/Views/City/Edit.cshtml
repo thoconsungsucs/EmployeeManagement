@@ -12,8 +12,10 @@
             <div class="mb-3">
                 <label asp-for="Name" class="form-label"></label>
                 <input asp-for="Name" class="form-control p-2" placeholder="Enter City Name">
-                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+
+            @* Display error *@
+            <div asp-validation-summary="All" class="text-danger"></div>
 
             <div class="row mt-4">
                 <div class="col-6 col-md-4">

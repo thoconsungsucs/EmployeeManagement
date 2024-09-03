@@ -26,6 +26,7 @@ namespace EmployeeManagement.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(City city)
         {
+            // Validate the model
             if (!ModelState.IsValid)
             {
                 return View(city);
@@ -33,6 +34,7 @@ namespace EmployeeManagement.Controllers
             var result = await _cityService.AddAsync(city);
             if (!result.IsValid)
             {
+                // Model is invalid, add errors to ModelState
                 result.AddToModelState(this.ModelState);
                 return View(nameof(Create), city);
             }
@@ -49,6 +51,7 @@ namespace EmployeeManagement.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(City city)
         {
+            // Validate the model
             if (!ModelState.IsValid)
             {
                 return View(city);
@@ -56,6 +59,7 @@ namespace EmployeeManagement.Controllers
             var result = await _cityService.UpdateAsync(city);
             if (!result.IsValid)
             {
+                // Model is invalid, add errors to ModelState
                 result.AddToModelState(this.ModelState);
                 return View(nameof(Edit), city);
             }
@@ -67,6 +71,7 @@ namespace EmployeeManagement.Controllers
         public async Task<ActionResult> Delete(int id)
         {
             var city = await _cityService.GetByIdAsync(id);
+
             return View(city);
         }
 
@@ -76,5 +81,13 @@ namespace EmployeeManagement.Controllers
             await _cityService.DeleteAsync(city);
             return RedirectToAction("Index");
         }
+
+        #region API CALLS
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            return Json(new { data = await _cityService.GetAllAsync() });
+        }
+        #endregion
     }
 }

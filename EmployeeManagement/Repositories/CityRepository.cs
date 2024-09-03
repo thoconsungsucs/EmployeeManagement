@@ -15,7 +15,13 @@ namespace EmployeeManagement.Repositories
 
         public async Task<bool> IsCityExists(string name)
         {
+            var isExist = await _context.Cities.AnyAsync(c => c.Name.ToLower() == name.ToLower());
             return await _context.Cities.AnyAsync(c => c.Name.ToLower() == name.ToLower());
+        }
+
+        public async Task<bool> IsCityExists(int id)
+        {
+            return await _context.Cities.AnyAsync(c => c.CityId == id);
         }
     }
 }

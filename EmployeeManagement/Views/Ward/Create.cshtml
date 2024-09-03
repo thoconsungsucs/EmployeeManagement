@@ -1,0 +1,104 @@
+﻿@model Ward
+<div class="card mt-5 shadow border-0 rounded-3">
+
+    <div class="card-header border-0 p-0 rounded-top-3 bg-primary p-4">
+        <div class="text-center align-content-center">
+            <h2 class="text-primary m-0 text-white">Create District </h2>
+        </div>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control p-2" placeholder="Enter District Name">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">City</label>
+                <select id="citySelect" class="form-control">
+                    <option disabled selected>--Select City--</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">District</label>
+                <select id="districtSelect" class="form-control" name="DistrictId" disabled>
+                    <option disabled selected>--Select District--</option>
+                </select>
+            </div>
+
+            @* Display error *@
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="row mt-4">
+                <div class="col-6 col-md-4">
+                    <button type="submit" class="btn btn-primary form-control">
+                        Create
+                    </button>
+                </div>
+                <div class="col-6 col-md-4">
+                    <a asp-controller="District" asp-action="Index" class="btn btn-outline-secondary form-control">Back To List</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            // Call API to get City List
+            $.ajax({
+                url: '@Url.Action("GetAll", "City")', // API url
+                method: 'GET',
+                success: function (response) {
+                    if (response.data && response.data.length > 0) {
+                        // Add city to select
+                        response.data.forEach(function (city) {
+                            $('#citySelect').append(new Option(city.name, city.cityId)); 
+                        });
+                        alert('City data loaded successfully.');
+                    }
+                },
+                error: function () {
+                    alert('Failed to load city data.');
+                }
+            });
+        });
+
+        $('#citySelect').change(function () {
+            var cityId = $(this).val();
+            if (cityId) {
+                // Call API to get District based on CityId
+                $.ajax({
+                    url: '@Url.Action("GetDistrictsByCityId", "District")', // API url
+                    method: 'GET',
+                    data: { cityId: cityId }, // Pass cityId to API
+                    success: function (response) {
+                        if (response.data && response.data.length > 0) {
+                            // Delete old district data
+                            $('#districtSelect').find('option:not(:first)').remove();
+
+                            // Add district options
+                            response.data.forEach(function (district) {
+                                $('#districtSelect').append(new Option(district.name, district.districtId));
+                            });
+                            // Enable district select
+                            document.getElementById('districtSelect').disabled = false;
+                        } else {
+                            $('#districtSelect').find('option:not(:first)').remove();
+                            alert('No districts found for the selected city.');
+                        }
+                    },
+                    error: function () {
+                        alert('Failed to load district data.');
+                    }
+                });
+            }
+        });
+    </script>
+}

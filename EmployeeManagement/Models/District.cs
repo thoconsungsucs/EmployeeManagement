@@ -8,6 +8,7 @@ namespace EmployeeManagement.Models
         public string Name { get; set; }
         [Required]
         public int CityId { get; set; }
+
         public City? City { get; set; }
         public List<Ward> Wards { get; set; } = new List<Ward>();
     }

@@ -1,0 +1,55 @@
+﻿@model IEnumerable<District>
+
+<div class="container">
+    <div class="row py-4">
+        <div class="col-6">
+            <h2 class="text-primary">District List</h2>
+        </div>
+
+        <div class="col-6 text-end">
+            <a asp-controller="District" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i>
+                Create New District
+            </a>
+        </div>
+
+    </div>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>
+                    District Id
+                </th>
+                <th>
+                    District Name
+                </th>
+                <th>
+                    City Name
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var District in Model)
+            {
+                <tr>
+                    <td>@District.DistrictId</td>
+                    <th>@District.Name</th>
+                    <th>@District.City?.Name</th>
+                    <td class="text-end w-25 p-0 align-content-center">
+                        <div class="btn-group" style="min-width: 150px;">
+                            <a asp-controller="District" asp-action="Edit" asp-route-id="@District.DistrictId" class="btn btn-primary">
+                                <i class="bi bi-pencil"></i>
+                                Edit
+                            </a>
+                            <a asp-controller="District" asp-action="Delete" asp-route-id="@District.DistrictId" class="btn btn-danger">
+                                <i class="bi bi-trash"></i>
+                                Delete
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

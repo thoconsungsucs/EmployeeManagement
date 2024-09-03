@@ -21,9 +21,15 @@ namespace EmployeeManagement
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddValidatorsFromAssemblyContaining<CityValidator>();
+            builder.Services.AddValidatorsFromAssemblyContaining<DistrictValidator>();
 
             builder.Services.AddScoped(typeof(ICityRepository), typeof(CityRepository));
+            builder.Services.AddScoped(typeof(IDistrictRepository), typeof(DistrictRepository));
+            builder.Services.AddScoped(typeof(IWardRepository), typeof(WardRepository));
             builder.Services.AddScoped<ICityService, CityService>();
+            builder.Services.AddScoped<IDistrictService, DistrictService>();
+            builder.Services.AddScoped<IWardService, WardService>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

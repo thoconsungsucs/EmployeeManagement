@@ -1,6 +1,7 @@
 ﻿using EmployeeManagement.DataAccess.Data;
 using EmployeeManagement.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace EmployeeManagement.Repositories
 {
@@ -19,9 +20,23 @@ namespace EmployeeManagement.Repositories
             return DbSet;
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetAsync(Expression<Func<T, bool>> filter, string? includeProperties = null)
         {
-            return await DbSet.FindAsync(id);
+
+            var query = DbSet.AsQueryable();
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            if (includeProperties != null)
+            {
+                foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProperty);
+                }
+            }
+
+            return await query.FirstOrDefaultAsync();
         }
 
         public async Task<T> AddAsync(T entity)
