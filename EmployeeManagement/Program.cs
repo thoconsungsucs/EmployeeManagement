@@ -18,17 +18,31 @@ namespace EmployeeManagement
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("DefaultConnection"),
+                    x => x.UseDateOnlyTimeOnly()
+                ));
 
             builder.Services.AddValidatorsFromAssemblyContaining<CityValidator>();
             builder.Services.AddValidatorsFromAssemblyContaining<DistrictValidator>();
+            builder.Services.AddValidatorsFromAssemblyContaining<WardValidator>();
+            builder.Services.AddValidatorsFromAssemblyContaining<EmployeeValidator>();
 
             builder.Services.AddScoped(typeof(ICityRepository), typeof(CityRepository));
             builder.Services.AddScoped(typeof(IDistrictRepository), typeof(DistrictRepository));
             builder.Services.AddScoped(typeof(IWardRepository), typeof(WardRepository));
+            builder.Services.AddScoped(typeof(IJobRepository), typeof(JobRepository));
+            builder.Services.AddScoped(typeof(IEthicRepository), typeof(EthicRepository));
+            builder.Services.AddScoped(typeof(IEmployeeRepository), typeof(EmployeeRepository));
+            builder.Services.AddScoped(typeof(IDiplomaRepository), typeof(DiplomaRepository));
+
             builder.Services.AddScoped<ICityService, CityService>();
             builder.Services.AddScoped<IDistrictService, DistrictService>();
             builder.Services.AddScoped<IWardService, WardService>();
+            builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+            builder.Services.AddScoped<IEthicService, EthicService>();
+            builder.Services.AddScoped<IJobService, JobService>();
+            builder.Services.AddScoped<IDiplomaService, DiplomaService>();
 
             var app = builder.Build();
 

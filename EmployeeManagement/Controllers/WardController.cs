@@ -90,14 +90,23 @@ namespace EmployeeManagement.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var district = await _districtService.GetByIdAsync(id);
-            return View(district);
+            var ward = await _wardService.GetByIdAsync(id);
+            return View(ward);
         }
         [HttpPost]
-        public async Task<IActionResult> Delete(District district)
+        public async Task<IActionResult> Delete(Ward ward)
         {
-            await _districtService.DeleteAsync(district);
+            await _wardService.DeleteAsync(ward);
             return RedirectToAction("Index");
         }
+
+        #region
+        [HttpGet]
+        public async Task<IActionResult> GetWardsByDistrictId(int districtId)
+        {
+            var wards = await _wardService.GetAllAsync(districtId);
+            return Json(new { data = wards });
+        }
+        #endregion
     }
 }

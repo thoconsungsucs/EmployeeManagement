@@ -16,5 +16,16 @@ namespace EmployeeManagement.Repositories
         {
             return await _context.Wards.AnyAsync(w => w.Name.ToLower() == name.ToLower());
         }
+
+        public async Task<bool> IsWardExists(int id)
+        {
+            return await _context.Wards.AnyAsync(w => w.WardId == id);
+        }
+
+        public async Task<bool> DoesBelongToDistrict(int districtId, int wardId)
+        {
+            return await _context.Wards.AnyAsync(w => w.DistrictId == districtId && w.WardId == wardId);
+        }
+
     }
 }

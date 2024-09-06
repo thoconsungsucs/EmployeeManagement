@@ -16,7 +16,7 @@ namespace EmployeeManagement.Validation
                 .Matches(@"^[a-zA-Z\s]*$").WithMessage(SD.ValidationMessages.CityMessage.NameRegex) // Match only letters and spaces
                 .MustAsync(async (name, _) =>
                 {
-                    return !(await cityRepository.IsCityExists(name));
+                    return !(await cityRepository.IsAnyCity(name));
                 }).WithMessage(SD.ValidationMessages.CityMessage.NameUnique);
         }
     }

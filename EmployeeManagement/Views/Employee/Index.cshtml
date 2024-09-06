@@ -1,0 +1,102 @@
+﻿@model IEnumerable<Employee>
+
+<div class="container">
+    <div class="row py-4">
+        <div class="col-6">
+            <h2 class="text-primary">Employee List</h2>
+        </div>
+
+        <div class="col-6 text-end">
+            <a asp-controller="Employee" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i>
+                Create New Employee
+            </a>
+        </div>
+
+    </div>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>
+                    Employee Id
+                </th>
+                <th>
+                    Employee Name
+                </th>
+                <th>
+                    Identity Id
+                </th>
+                <th>
+                    PhoneNumber
+                </th>
+                <th>
+                    DateOfBirth
+                </th>
+                <th>
+                    Age
+                </th>
+                <th>
+                    Job
+                </th>
+                <th>
+                    Ethic
+                </th>
+                <th>
+                    City
+                </th>
+                <th>
+                    District
+                </th>
+                <th>
+                    Ward
+                </th>
+                <th>
+                    Address
+                </th>
+                <th>
+                    Diploma
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var Employee in Model)
+            {
+                <tr>
+                    <td>@Employee.EmployeeId</td>
+                    <th>@Employee.Name</th>
+                    <th>@Employee.IdentityId</th>
+                    <th>@Employee.PhoneNumber</th>
+                    <th>@Employee.DateOfBirth</th>
+                    <th>@Employee.Age</th>
+                    <th>@Employee.Job?.Title</th>
+                    <th>@Employee.Ethic?.Name</th>
+                    <th>@Employee.City?.Name</th>
+                    <th>@Employee.District?.Name</th>
+                    <th>@Employee.Ward?.Name</th>
+                    <th>@Employee.Address</th>
+                    <th>@Employee.Diplomas.Count</th>
+
+                    <td class="text-end w-25 p-0 align-content-center">
+                        <div class="btn-group" style="min-width: 150px;">
+                            <a asp-controller="Employee" asp-action="Edit" asp-route-id="@Employee.EmployeeId" class="btn btn-primary">
+                                <i class="bi bi-pencil"></i>
+                                Edit
+                            </a>
+                            <a asp-controller="Employee" asp-action="Delete" asp-route-id="@Employee.EmployeeId" class="btn btn-danger">
+                                <i class="bi bi-trash"></i>
+                                Delete
+                            </a>
+                            <a asp-controller="Employee" asp-action="Details" asp-route-id="@Employee.EmployeeId" class="btn btn-primary">
+                                Details
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

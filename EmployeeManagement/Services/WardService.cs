@@ -66,6 +66,11 @@ namespace EmployeeManagement.Services
                 .ToArrayAsync();
         }
 
+        public async Task<IEnumerable<Ward>> GetAllAsync(int districtId)
+        {
+            return await _wardRepository.GetAllAsync().Where(e => e.DistrictId == districtId).ToArrayAsync();
+        }
+
         public async Task<Ward> GetByIdAsync(int id)
         {
             return await _wardRepository.GetAsync(e => e.WardId == id, includeProperties: "District");

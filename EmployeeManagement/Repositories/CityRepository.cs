@@ -13,15 +13,16 @@ namespace EmployeeManagement.Repositories
             _context = context;
         }
 
-        public async Task<bool> IsCityExists(string name)
+        public async Task<bool> IsAnyCity(string name)
         {
             var isExist = await _context.Cities.AnyAsync(c => c.Name.ToLower() == name.ToLower());
             return await _context.Cities.AnyAsync(c => c.Name.ToLower() == name.ToLower());
         }
 
-        public async Task<bool> IsCityExists(int id)
+        public async Task<bool> IsAnyCity(int id)
         {
             return await _context.Cities.AnyAsync(c => c.CityId == id);
         }
+
     }
 }

@@ -1,0 +1,255 @@
+﻿@model Employee
+
+<div class="card mt-5 shadow border-0 rounded-3">
+    <div class="card-header border-0 p-0 rounded-top-3 bg-primary p-4">
+        <div class="text-center align-content-center">
+            <h2 class="text-primary m-0 text-white">Create Employee</h2>
+        </div>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control p-2" placeholder="Enter Employee Name">
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="DateOfBirth" class="form-label"></label>
+                <input asp-for="DateOfBirth" class="form-control p-2" placeholder="Enter Date of birth" type="date">
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PhoneNumber" class="form-label"></label>
+                <input asp-for="PhoneNumber" class="form-control p-2" placeholder="Enter phone number" type="text">
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="IdentityId" class="form-label"></label>
+                <input asp-for="IdentityId" class="form-control p-2" placeholder="Enter identity id" type="number">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">City</label>
+                <select id="citySelect" class="form-control" name="CityId">
+                    <option disabled selected>--Select City--</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">District</label>
+                <select id="districtSelect" class="form-control" name="DistrictId" disabled>
+                    <option disabled selected>--Select District--</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Ward</label>
+                <select id="wardSelect" class="form-control" name="WardId" disabled>
+                    <option disabled selected>--Select Ward--</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Address" class="form-label"></label>
+                <input asp-for="Address" class="form-control p-2" placeholder="Enter address">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Job</label>
+                <select id="jobSelect" class="form-control" name="JobId">
+                    <option disabled selected>--Select Job--</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Ethic</label>
+                <select id="ethicSelect" class="form-control" name="EthicId">
+                    <option disabled selected>--Select Ethic--</option>
+                </select>
+            </div>
+
+            <div id="DiplomasWrapper" class="mb-3">
+            </div>
+            <button type="button" id="addDiplomaBtn" class="btn btn-success">Add Diploma</button>
+            @* Display error *@
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="row mt-4">
+                <div class="col-6 col-md-4">
+                    <button type="submit" class="btn btn-primary form-control">
+                        Create
+                    </button>
+                </div>
+                <div class="col-6 col-md-4">
+                    <a asp-controller="Employee" asp-action="Index" class="btn btn-outline-secondary form-control">Back To List</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+
+        <script>
+            $(document).ready(function () {
+                // Load Job List
+                $.ajax({
+                    url: '@Url.Action("GetAll", "Job")',
+                    method: 'GET',
+                    success: function (response) {
+                        if (response.data && response.data.length > 0) {
+                            response.data.forEach(function (job) {
+                                $('#jobSelect').append(new Option(job.title, job.jobId));
+                            });
+                        }
+                    },
+                    error: function () {
+                        alert('Failed to load job data.');
+                    }
+                });
+
+                // Load Ethic List
+                $.ajax({
+                    url: '@Url.Action("GetAll", "Ethic")',
+                    method: 'GET',
+                    success: function (response) {
+                        if (response.data && response.data.length > 0) {
+                            response.data.forEach(function (ethic) {
+                                $('#ethicSelect').append(new Option(ethic.name, ethic.ethicId));
+                            });
+                        }
+                    },
+                    error: function () {
+                        alert('Failed to load ethic data.');
+                    }
+                });
+
+                // Load City List
+                $.ajax({
+                    url: '@Url.Action("GetAll", "City")',
+                    method: 'GET',
+                    success: function (response) {
+                        if (response.data && response.data.length > 0) {
+                            response.data.forEach(function (city) {
+                                $('#citySelect').append(new Option(city.name, city.cityId));
+                            });
+                        }
+                    },
+                    error: function () {
+                        alert('Failed to load city data.');
+                    }
+                });
+
+                // District and Ward Logic
+                $('#citySelect').change(function () {
+                    var cityId = $(this).val();
+                    if (cityId) {
+                        $.ajax({
+                            url: '@Url.Action("GetDistrictsByCityId", "District")',
+                            method: 'GET',
+                            data: { cityId: cityId },
+                            success: function (response) {
+                                if (response.data && response.data.length > 0) {
+                                    $('#districtSelect').find('option:not(:first)').remove();
+                                    response.data.forEach(function (district) {
+                                        $('#districtSelect').append(new Option(district.name, district.districtId));
+                                    });
+                                    $('#districtSelect').prop('disabled', false);
+                                } else {
+                                    $('#districtSelect').find('option:not(:first)').remove();
+                                    alert('No districts found for the selected city.');
+                                }
+                            },
+                            error: function () {
+                                alert('Failed to load district data.');
+                            }
+                        });
+                    }
+                });
+
+                $('#districtSelect').change(function () {
+                    var districtId = $(this).val();
+                    if (districtId) {
+                        $.ajax({
+                            url: '@Url.Action("GetWardsByDistrictId", "Ward")',
+                            method: 'GET',
+                            data: { districtId: districtId },
+                            success: function (response) {
+                                if (response.data && response.data.length > 0) {
+                                    $('#wardSelect').find('option:not(:first)').remove();
+                                    response.data.forEach(function (ward) {
+                                        $('#wardSelect').append(new Option(ward.name, ward.wardId));
+                                    });
+                                    $('#wardSelect').prop('disabled', false);
+                                } else {
+                                    $('#wardSelect').find('option:not(:first)').remove();
+                                    alert('No wards found for the selected district.');
+                                }
+                            },
+                            error: function () {
+                                alert('Failed to load ward data.');
+                            }
+                        });
+                    }
+                });
+            });
+
+            var diplomaCount = 0;
+
+            $('#addDiplomaBtn').click(function () {
+                if (diplomaCount < 3) {
+                    var newItemHtml = `
+                                                                            <div class="diploma-item" data-index="${diplomaCount}">
+                                                                                <div class="row">
+                                                                                    <div class="form-group col-md-3">
+                                                                                        <label for="Diplomas_${diplomaCount}__Name" class="control-label">Name</label>
+                                                                                        <input type="text" id="Diplomas_${diplomaCount}__Name" name="Diplomas[${diplomaCount}].Name" class="form-control" />
+                                                                                        <span asp-validation-for="Diplomas[${diplomaCount}].Name" class="text-danger"></span>
+                                                                                    </div>
+                                                                                    <div class="form-group col-md-3">
+                                                                                        <label for="Diplomas_${diplomaCount}__IssuedDate" class="control-label">Issued Date</label>
+                                                                                        <input id="Diplomas_${diplomaCount}__IssuedDate" name="Diplomas[${diplomaCount}].IssuedDate" class="form-control" type="date"/>
+                                                                                        <span asp-validation-for="Diplomas[${diplomaCount}].IssuedDate" class="text-danger"></span>
+                                                                                    </div>
+                                                                                    <div class="form-group col-md-3">
+                                                                                        <label for="Diplomas_${diplomaCount}__IssuedBy" class="control-label">Issued By</label>
+                                                                                        <input type="text" id="Diplomas_${diplomaCount}__IssuedBy" name="Diplomas[${diplomaCount}].IssuedBy" class="form-control"/>
+                                                                                        <span asp-validation-for="Diplomas[${diplomaCount}].IssuedBy" class="text-danger"></span>
+                                                                                    </div>
+                                                                                    <div class="form-group col-md-3">
+                                                                                        <label for="Diplomas_${diplomaCount}__ExpiryDate" class="control-label">Expiry Date</label>
+                                                                                        <input id="Diplomas_${diplomaCount}__ExpiryDate" name="Diplomas[${diplomaCount}].ExpiryDate" class="form-control" type="date"/>
+                                                                                        <span asp-validation-for="Diplomas[${diplomaCount}].ExpiryDate" class="text-danger"></span>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                 <button type="button" class="btn btn-danger remove-diploma-btn mt-2" >Delete</button>
+                                                                                <hr/>
+                                                                            </div>`;
+
+                    $('#DiplomasWrapper').append(newItemHtml);
+                    diplomaCount++;
+                }
+            });
+
+            $('#DiplomasWrapper').on('click', '.remove-diploma-btn', function () {
+                $(this).closest('.diploma-item').remove();
+                diplomaCount--;
+                $('#DiplomasWrapper .diploma-item').each(function (index) {
+                    $(this).attr('data-index', index);
+                    $(this).find('[id^="Diplomas_"]').each(function () {
+                        var id = $(this).attr('id');
+                        var name = $(this).attr('name');
+                        var newId = id.replace(/\d+/, index);
+                        var newName = name.replace(/\d+/, index);
+                        $(this).attr('id', newId);
+                        $(this).attr('name', newName);
+                    });
+                });
+            });
+        </script>
+    }
+
+}

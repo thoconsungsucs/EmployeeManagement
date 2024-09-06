@@ -4,7 +4,8 @@ namespace EmployeeManagement.Interfaces.IRepositories
 {
     public interface IDistrictRepository : IRepository<District>
     {
-        Task<bool> IsDistrictExists(string name);
-        Task<bool> IsDistrictExists(int id);
+        Task<bool> IsAnyDistrict(string name);
+        Task<bool> IsAnyDistrict(int id);
+        Task<bool> DoesBelongToCity(int cityId, int districtId);
     }
 }

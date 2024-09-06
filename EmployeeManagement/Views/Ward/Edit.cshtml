@@ -8,6 +8,7 @@
     </div>
     <div class="card-body">
         <form method="post">
+            <input asp-for="Ward.WardId" hidden />
             <div class="mb-3">
                 <label asp-for="Ward.Name" class="form-label"></label>
                 <input asp-for="Ward.Name" class="form-control p-2" placeholder="Enter Ward Name">
@@ -26,7 +27,7 @@
             <div class="row mt-4">
                 <div class="col-6 col-md-4">
                     <button type="submit" class="btn btn-primary form-control">
-                        Create
+                        Edit
                     </button>
                 </div>
                 <div class="col-6 col-md-4">

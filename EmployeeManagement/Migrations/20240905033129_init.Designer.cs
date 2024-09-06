@@ -4,6 +4,7 @@ using EmployeeManagement.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployeeManagement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240905033129_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,38 +52,6 @@ namespace EmployeeManagement.Migrations
                             CityId = 2,
                             Name = "Ho Chi Minh"
                         });
-                });
-
-            modelBuilder.Entity("EmployeeManagement.Models.Diploma", b =>
-                {
-                    b.Property<int>("DiplomaId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DiplomaId"));
-
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly>("ExpiryDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("IssuedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly>("IssuedDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("DiplomaId");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("Diplomas");
                 });
 
             modelBuilder.Entity("EmployeeManagement.Models.District", b =>
@@ -139,10 +110,6 @@ namespace EmployeeManagement.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeId"));
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
@@ -156,12 +123,14 @@ namespace EmployeeManagement.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("EthicId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("IdentityId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("JobId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -336,17 +305,6 @@ namespace EmployeeManagement.Migrations
                         });
                 });
 
-            modelBuilder.Entity("EmployeeManagement.Models.Diploma", b =>
-                {
-                    b.HasOne("EmployeeManagement.Models.Employee", "Employee")
-                        .WithMany("Diplomas")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-                });
-
             modelBuilder.Entity("EmployeeManagement.Models.District", b =>
                 {
                     b.HasOne("EmployeeManagement.Models.City", "City")
@@ -375,12 +333,14 @@ namespace EmployeeManagement.Migrations
                     b.HasOne("EmployeeManagement.Models.Ethic", "Ethic")
                         .WithMany()
                         .HasForeignKey("EthicId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
 
                     b.HasOne("EmployeeManagement.Models.Job", "Job")
                         .WithMany()
                         .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
 
                     b.HasOne("EmployeeManagement.Models.Ward", "Ward")
                         .WithMany()
@@ -418,11 +378,6 @@ namespace EmployeeManagement.Migrations
             modelBuilder.Entity("EmployeeManagement.Models.District", b =>
                 {
                     b.Navigation("Wards");
-                });
-
-            modelBuilder.Entity("EmployeeManagement.Models.Employee", b =>
-                {
-                    b.Navigation("Diplomas");
                 });
 #pragma warning restore 612, 618
         }

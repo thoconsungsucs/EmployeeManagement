@@ -1,0 +1,219 @@
+﻿@model Employee
+<div class="card mt-5 shadow border-0 rounded-3">
+    <div class="card-header border-0 p-0 rounded-top-3 bg-primary p-4">
+        <div class="text-center align-content-center">
+            <h2 class="text-primary m-0 text-white">Edit Employee </h2>
+        </div>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <input asp-for="EmployeeId" hidden />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label"></label>
+                        <input asp-for="Name" class="form-control p-2" placeholder="Enter Employee Name">
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control p-2" placeholder="Enter phone number" type="number">
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Age" class="form-label"></label>
+                        <input asp-for="Age" class="form-control p-2" disabled>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">City</label>
+                        <select id="citySelect" class="form-control" name="CityId">
+                            <option disabled selected>--Select City--</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Ward</label>
+                        <select id="wardSelect" class="form-control " name="WardId" disabled>
+                            <option disabled selected>--Select Ward--</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Job</label>
+                        <select id="jobSelect" class="form-control" name="JobId">
+                            <option disabled selected>--Select Job --</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="DateOfBirth" class="form-label"></label>
+                        <input class="form-control p-2" type="date"
+                               value="@Model.DateOfBirth.ToString("yyyy-MM-dd")"
+                               asp-for="DateOfBirth" placeholder="Enter date of birth">
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="IdentityId" class="form-label"></label>
+                        <input asp-for="IdentityId" class="form-control p-2" placeholder="Enter identity id" type="number">
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label"></label>
+                        <input asp-for="Address" class="form-control p-2" placeholder="Enter address">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">District</label>
+                        <select id="districtSelect" class="form-control" name="DistrictId" disabled>
+                            <option disabled selected>--Select District--</option>
+                        </select>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label class="form-label">Ethic</label>
+                        <select id="ethicSelect" class="form-control" name="EthicId">
+                            <option disabled selected>--Select Ethic--</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            @* Display error *@
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="row mt-4">
+                <div class="col-6 col-md-4">
+                    <button type="submit" class="btn btn-primary form-control">
+                        Edit
+                    </button>
+                </div>
+                <div class="col-6 col-md-4">
+                    <a asp-controller="Employee" asp-action="Index" class="btn btn-outline-secondary form-control">Back To List</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            // Call API to get Job List
+            $.ajax({
+                url: '@Url.Action("GetAll", "Job")', // API url
+                method: 'GET',
+                success: function (response) {
+                    if (response.data && response.data.length > 0) {
+                        response.data.forEach(function (job) {
+                            $('#jobSelect').append(new Option(job.title, job.jobId));
+                        });
+                        // Set selected value based on model
+                        $('#jobSelect').val('@Model.JobId');
+                    }
+                },
+                error: function () {
+                    alert('Failed to load job data.');
+                }
+            });
+
+            // Call API to get Ethic List
+            $.ajax({
+                url: '@Url.Action("GetAll", "Ethic")', // API url
+                method: 'GET',
+                success: function (response) {
+                    if (response.data && response.data.length > 0) {
+                        response.data.forEach(function (ethic) {
+                            $('#ethicSelect').append(new Option(ethic.name, ethic.ethicId));
+                        });
+                        // Set selected value based on model
+                        $('#ethicSelect').val('@Model.EthicId');
+                    }
+                },
+                error: function () {
+                    alert('Failed to load ethic data.');
+                }
+            });
+
+            // Call API to get City List
+            $.ajax({
+                url: '@Url.Action("GetAll", "City")', // API url
+                method: 'GET',
+                success: function (response) {
+                    if (response.data && response.data.length > 0) {
+                        response.data.forEach(function (city) {
+                            $('#citySelect').append(new Option(city.name, city.cityId));
+                        });
+                        // Set selected city based on model
+                        $('#citySelect').val('@Model.CityId').change(); // Trigger change event to load districts
+                    }
+                },
+                error: function () {
+                    alert('Failed to load city data.');
+                }
+            });
+
+            // Handle district change based on selected city
+            $('#citySelect').change(function () {
+                var cityId = $(this).val();
+                if (cityId) {
+                    $.ajax({
+                        url: '@Url.Action("GetDistrictsByCityId", "District")', // API url
+                        method: 'GET',
+                        data: { cityId: cityId }, // Pass cityId to API
+                        success: function (response) {
+                            if (response.data && response.data.length > 0) {
+                                $('#districtSelect').find('option:not(:first)').remove();
+                                response.data.forEach(function (district) {
+                                    $('#districtSelect').append(new Option(district.name, district.districtId));
+                                });
+                                $('#districtSelect').val('@Model.DistrictId').change(); // Set district and trigger change
+                                document.getElementById('districtSelect').disabled = false;
+                            }
+                        },
+                        error: function () {
+                            alert('Failed to load district data.');
+                        }
+                    });
+                }
+            });
+
+            // Handle ward change based on selected district
+            $('#districtSelect').change(function () {
+                var districtId = $(this).val();
+                if (districtId) {
+                    $.ajax({
+                        url: '@Url.Action("GetWardsByDistrictId", "Ward")', // API url
+                        method: 'GET',
+                        data: { districtId: districtId }, // Pass districtId to API
+                        success: function (response) {
+                            if (response.data && response.data.length > 0) {
+                                $('#wardSelect').find('option:not(:first)').remove();
+                                response.data.forEach(function (ward) {
+                                    $('#wardSelect').append(new Option(ward.name, ward.wardId));
+                                });
+                                $('#wardSelect').val('@Model.WardId'); // Set selected ward based on model
+                                document.getElementById('wardSelect').disabled = false;
+                            }
+                        },
+                        error: function () {
+                            alert('Failed to load ward data.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

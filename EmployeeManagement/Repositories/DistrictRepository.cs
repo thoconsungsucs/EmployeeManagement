@@ -12,14 +12,19 @@ namespace EmployeeManagement.Repositories
         {
             _context = context;
         }
-        public async Task<bool> IsDistrictExists(string name)
+        public async Task<bool> IsAnyDistrict(string name)
         {
             return await _context.Districts.AnyAsync(d => d.Name.ToLower() == name.ToLower());
         }
 
-        public async Task<bool> IsDistrictExists(int id)
+        public async Task<bool> IsAnyDistrict(int id)
         {
             return await _context.Districts.AnyAsync(d => d.DistrictId == id);
+        }
+
+        public async Task<bool> DoesBelongToCity(int cityId, int districtId)
+        {
+            return await _context.Districts.AnyAsync(d => d.CityId == cityId && d.DistrictId == districtId);
         }
     }
 }

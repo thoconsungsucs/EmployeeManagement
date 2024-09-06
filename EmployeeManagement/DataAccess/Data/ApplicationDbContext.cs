@@ -13,7 +13,10 @@ namespace EmployeeManagement.DataAccess.Data
         public DbSet<City> Cities { get; set; }
         public DbSet<District> Districts { get; set; }
         public DbSet<Ward> Wards { get; set; }
-
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Job> Jobs { get; set; }
+        public DbSet<Ethic> Ethics { get; set; }
+        public DbSet<Diploma> Diplomas { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<City>().HasKey(c => c.CityId);
@@ -32,6 +35,41 @@ namespace EmployeeManagement.DataAccess.Data
                 .HasForeignKey(w => w.DistrictId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Employee>()
+                .HasOne(e => e.City)
+                .WithMany()
+                .HasForeignKey(e => e.CityId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Employee>()
+                .HasOne(e => e.District)
+                .WithMany()
+                .HasForeignKey(e => e.DistrictId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Employee>()
+                .HasOne(e => e.Ward)
+                .WithMany()
+                .HasForeignKey(e => e.WardId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Employee>()
+                .HasOne(e => e.Job)
+                .WithMany()
+                .HasForeignKey(e => e.JobId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Employee>()
+                .HasOne(e => e.Ethic)
+                .WithMany()
+                .HasForeignKey(e => e.EthicId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Employee>()
+                .HasMany(e => e.Diplomas)
+                .WithOne(c => c.Employee)
+                .HasForeignKey(c => c.EmployeeId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<City>().HasData(
                 new City { CityId = 1, Name = "Hanoi" },
@@ -55,6 +93,20 @@ namespace EmployeeManagement.DataAccess.Data
                 new Ward { WardId = 7, Name = "Binh Thanh", DistrictId = 4 },
                 new Ward { WardId = 8, Name = "Binh Loi", DistrictId = 4 }
             );
+
+            modelBuilder.Entity<Job>().HasData(
+                new Job { JobId = 1, Title = "Developer", Description = "Develop software" },
+                new Job { JobId = 2, Title = "Tester", Description = "Test software" },
+                new Job { JobId = 3, Title = "BA", Description = "Analyze requirement" }
+            );
+
+            modelBuilder.Entity<Ethic>().HasData(
+                new Ethic { EthicId = 1, Name = "Kinh" },
+                new Ethic { EthicId = 2, Name = "Muong" },
+                new Ethic { EthicId = 3, Name = "Thai" }
+            );
+
+
         }
     }
 }

@@ -1,0 +1,52 @@
+﻿@model Diploma
+
+<div class="card mt-5 shadow border-0 rounded-3">
+
+    <div class="card-header border-0 p-0 rounded-top-3 bg-primary p-4">
+        <div class="text-center align-content-center">
+            <h2 class="text-primary m-0 text-white">Edit Diploma </h2>
+        </div>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <input asp-for="DiplomaId" hidden />
+            <input hidden asp-for="EmployeeId" />
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control p-2" placeholder="Enter Diploma Name">
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="IssuedDate" class="form-label"></label>
+                <input asp-for="IssuedDate" class="form-control p-2" placeholder="Enter IssuedDate" type="date" >
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="IssuedBy" class="form-label"></label>
+                <input asp-for="IssuedBy" class="form-control p-2" placeholder="Enter IssuedDate" type="text">
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ExpiryDate" class="form-label"></label>
+                <input asp-for="ExpiryDate" class="form-control p-2" placeholder="Enter ExpiryDate" type="date" >
+            </div>
+
+            @* Display error *@
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="row mt-4">
+                <div class="col-6 col-md-4">
+                    <button type="submit" class="btn btn-primary form-control">
+                        Create
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

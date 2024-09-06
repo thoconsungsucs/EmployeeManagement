@@ -15,7 +15,7 @@ namespace EmployeeManagement.Validation
                 .NotEmpty().WithMessage(SD.ValidationMessages.WardMessage.DistrictRequired)
                 .MustAsync(async (districtId, _) =>
                 {
-                    return await districtRepository.IsDistrictExists(districtId);
+                    return await districtRepository.IsAnyDistrict(districtId);
                 }).WithMessage(SD.ValidationMessages.WardMessage.DistrictInvalid);
         }
     }

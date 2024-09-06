@@ -1,0 +1,67 @@
+﻿@model Employee
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Employee Details</h1>
+
+<div>
+    <h3>Employee Information</h3>
+    <p><strong>Employee ID:</strong> @Model.EmployeeId</p>
+    <p><strong>Name:</strong> @Model.Name</p>
+    <p><strong>Date of Birth:</strong> @Model.DateOfBirth.ToString("yyyy-MM-dd")</p>
+    <p><strong>Age:</strong> @Model.Age</p>
+    <p><strong>Phone Number:</strong> @Model.PhoneNumber</p>
+    <p><strong>Identity ID:</strong> @Model.IdentityId</p>
+    <p><strong>Job:</strong> @Model.Job?.Title</p>
+    <p><strong>Ethic:</strong> @Model.Ethic?.Name</p>
+    <p><strong>Ward:</strong> @Model.Ward?.Name</p>
+    <p><strong>District:</strong> @Model.District?.Name</p>
+    <p><strong>City:</strong> @Model.City?.Name</p>
+    <p><strong>Address:</strong> @Model.Address</p>
+</div>
+
+<div>
+    <h3>Diplomas</h3>
+    @if (Model.Diplomas.Count > 0)
+    {
+        <table class="table table-bordered table-striped">
+            <tr>
+                <th>Diploma Name</th>
+                <th>Issued Date</th>
+                <th>Issued By</th>
+                <th>Expiry Date</th>
+                <th>Actions</th>
+            </tr>
+            @foreach (var diploma in Model.Diplomas)
+            {
+                <tr>
+                    <td>@diploma.Name</td>
+                    <td>@diploma.IssuedDate</td>
+                    <td>@diploma.IssuedBy</td>
+                    <td>@diploma.ExpiryDate</td>
+
+                    <td>
+                        <button class="btn btn-primary">
+                            <a asp-controller="Diploma" asp-action="Edit" asp-route-id="@diploma.DiplomaId" class="text-light text-decoration-none">Edit</a>
+                        </button>
+                        <button class="btn btn-danger">
+                            <a asp-controller="Diploma" asp-action="Delete" asp-route-id="@diploma.DiplomaId" class="text-light text-decoration-none">Delete</a>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+        <p>No diplomas found.</p>
+    }
+
+    @if (Model.Diplomas.Count < 3)
+    {
+        <button class="btn btn-primary">
+            <a asp-controller="Diploma" asp-action="Create" asp-route-employeeId="@Model.EmployeeId" class="text-light text-decoration-none">Add Diploma</a>
+        </button>
+    } 
+</div>

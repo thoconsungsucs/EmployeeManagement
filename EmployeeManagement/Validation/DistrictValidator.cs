@@ -15,14 +15,14 @@ namespace EmployeeManagement.Validation
                 .MaximumLength(50).WithMessage(SD.ValidationMessages.DistrictMessage.NameLength)
                 .MustAsync(async (name, _) =>
                     {
-                        return !await districtRepository.IsDistrictExists(name);
+                        return !await districtRepository.IsAnyDistrict(name);
                     }).WithMessage(SD.ValidationMessages.DistrictMessage.NameUnique);
 
             RuleFor(d => d.CityId)
                 .NotEmpty().WithMessage("City is required")
                 .MustAsync(async (cityId, _) =>
                 {
-                    return await cityRepository.IsCityExists(cityId);
+                    return await cityRepository.IsAnyCity(cityId);
                 }).WithMessage(SD.ValidationMessages.DistrictMessage.CityInvalid);
         }
     }
