@@ -114,6 +114,7 @@ namespace EmployeeManagement.Controllers
                 });
                 return View(nameof(Edit), districtVM);
             }
+            TempData["Success"] = "District updated successfully";
             return RedirectToAction("Index");
         }
 
@@ -127,6 +128,7 @@ namespace EmployeeManagement.Controllers
         public async Task<IActionResult> Delete(District district)
         {
             await _districtService.DeleteAsync(district);
+            TempData["Success"] = "District deleted successfully";
             return RedirectToAction("Index");
         }
 

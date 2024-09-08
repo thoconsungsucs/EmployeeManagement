@@ -1,16 +1,25 @@
 ﻿@model IEnumerable<Employee>
 
 <div class="container">
+    <partial name="_Notifications" />
     <div class="row py-4">
         <div class="col-6">
             <h2 class="text-primary">Employee List</h2>
+            <form asp-action="ImportEmployees" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="file">Upload Excel File</label>
+                    <input type="file" name="file" class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-primary">Import</button>
+            </form>
         </div>
 
-        <div class="col-6 text-end">
-            <a asp-controller="Employee" asp-action="Create" class="btn btn-primary">
+        <div class="col-6 text-end p-0">
+            <a asp-controller="Employee" asp-action="Create" class="btn btn-primary m-2">
                 <i class="bi bi-plus-lg"></i>
                 Create New Employee
             </a>
+            <a asp-action="ExportAllEmployees" class="btn btn-primary">Export Employees</a>
         </div>
 
     </div>
@@ -99,4 +108,5 @@
             }
         </tbody>
     </table>
+
 </div>

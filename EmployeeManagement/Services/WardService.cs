@@ -11,17 +11,32 @@ namespace EmployeeManagement.Services
     public class WardService : IWardService
     {
         private readonly IWardRepository _wardRepository;
-        private readonly IValidator<Ward> _WardValidator;
+        private readonly IValidator<Ward> _wardValidator;
+        private readonly IDistrictRepository _districtRepository;
 
-        public WardService(IWardRepository WardRepository, IValidator<Ward> WardValidator)
+        public WardService(IWardRepository WardRepository, IValidator<Ward> WardValidator, IDistrictRepository districtRepository)
         {
             _wardRepository = WardRepository;
-            _WardValidator = WardValidator;
+            _wardValidator = WardValidator;
+            _districtRepository = districtRepository;
+        }
+
+        public async Task<ValidationResult> ValidateWard(Ward ward)
+        {
+            var validationResult = await _wardValidator.ValidateAsync(ward);
+            var isAnyDistrict = await _districtRepository.IsAnyDistrict(ward.DistrictId);
+
+            if (!isAnyDistrict)
+            {
+                validationResult.Errors.Add(new ValidationFailure("District", SD.ValidationMessages.WardMessage.DistrictInvalid));
+            }
+
+            return validationResult;
         }
 
         public async Task<ValidationResult> AddAsync(Ward ward)
         {
-            var validationResult = await _WardValidator.ValidateAsync(ward);
+            var validationResult = await ValidateWard(ward);
             if (!validationResult.IsValid)
             {
                 return validationResult;
@@ -78,7 +93,7 @@ namespace EmployeeManagement.Services
 
         public async Task<ValidationResult> UpdateAsync(Ward ward)
         {
-            var validationResult = await _WardValidator.ValidateAsync(ward);
+            var validationResult = await ValidateWard(ward);
             if (!validationResult.IsValid)
             {
                 return validationResult;

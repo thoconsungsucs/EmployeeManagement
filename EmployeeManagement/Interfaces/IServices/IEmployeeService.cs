@@ -11,5 +11,7 @@ namespace EmployeeManagement.Interfaces.IServices
         Task<ValidationResult> AddAsync(Employee employee);
         Task<ValidationResult> UpdateAsync(Employee employee);
         Task<Employee> DeleteAsync(Employee employee);
+        Task<byte[]> ExportEmployee();
+        Task<List<string>> ImportEmployees(IFormFile file);
     }
 }

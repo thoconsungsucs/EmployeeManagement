@@ -13,11 +13,8 @@ namespace EmployeeManagement.Validation
                 .NotEmpty().WithMessage(SD.ValidationMessages.CityMessage.NameRequired)
                 .MinimumLength(2).WithMessage(SD.ValidationMessages.CityMessage.NameLength)
                 .MaximumLength(50).WithMessage(SD.ValidationMessages.CityMessage.NameLength)
-                .Matches(@"^[a-zA-Z\s]*$").WithMessage(SD.ValidationMessages.CityMessage.NameRegex) // Match only letters and spaces
-                .MustAsync(async (name, _) =>
-                {
-                    return !(await cityRepository.IsAnyCity(name));
-                }).WithMessage(SD.ValidationMessages.CityMessage.NameUnique);
+                .Matches(@"^[a-zA-Z\s]*$").WithMessage(SD.ValidationMessages.CityMessage.NameRegex); // Match only letters and spaces
+
         }
     }
 }

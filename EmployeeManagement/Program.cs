@@ -1,8 +1,10 @@
 using EmployeeManagement.DataAccess.Data;
+using EmployeeManagement.Interfaces;
 using EmployeeManagement.Interfaces.IRepositories;
 using EmployeeManagement.Interfaces.IServices;
 using EmployeeManagement.Repositories;
 using EmployeeManagement.Services;
+using EmployeeManagement.Utilities;
 using EmployeeManagement.Validation;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +29,8 @@ namespace EmployeeManagement
             builder.Services.AddValidatorsFromAssemblyContaining<DistrictValidator>();
             builder.Services.AddValidatorsFromAssemblyContaining<WardValidator>();
             builder.Services.AddValidatorsFromAssemblyContaining<EmployeeValidator>();
+
+            builder.Services.AddTransient(typeof(IExporter), typeof(ExcelExporter));
 
             builder.Services.AddScoped(typeof(ICityRepository), typeof(CityRepository));
             builder.Services.AddScoped(typeof(IDistrictRepository), typeof(DistrictRepository));

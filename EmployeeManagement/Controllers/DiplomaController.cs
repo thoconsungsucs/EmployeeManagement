@@ -46,6 +46,7 @@ namespace EmployeeManagement.Controllers
                 result.AddToModelState(this.ModelState);
                 return View(diploma);
             }
+            TempData["Success"] = "Diploma updated successfully";
             return RedirectToAction("Details", "Employee", new { id = diploma.EmployeeId });
         }
 
@@ -53,6 +54,7 @@ namespace EmployeeManagement.Controllers
         {
             var diploma = await _diplomaService.GetDiplomaById(id);
             await _diplomaService.DeleteAsync(diploma);
+            TempData["Success"] = "Diploma deleted successfully";
             return RedirectToAction("Details", "Employee", new { id = diploma.EmployeeId });
         }
 

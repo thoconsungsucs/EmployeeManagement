@@ -12,11 +12,8 @@ namespace EmployeeManagement.Validation
             RuleFor(x => x.Name).NotEmpty().WithMessage(SD.ValidationMessages.WardMessage.NameRequired);
             RuleFor(x => x.Name).MaximumLength(50).WithMessage(SD.ValidationMessages.WardMessage.NameLength);
             RuleFor(x => x.DistrictId)
-                .NotEmpty().WithMessage(SD.ValidationMessages.WardMessage.DistrictRequired)
-                .MustAsync(async (districtId, _) =>
-                {
-                    return await districtRepository.IsAnyDistrict(districtId);
-                }).WithMessage(SD.ValidationMessages.WardMessage.DistrictInvalid);
+                .NotEmpty().WithMessage(SD.ValidationMessages.WardMessage.DistrictRequired);
+
         }
     }
 }

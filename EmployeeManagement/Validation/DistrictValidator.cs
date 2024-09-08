@@ -12,18 +12,12 @@ namespace EmployeeManagement.Validation
             RuleFor(d => d.Name)
                 .NotEmpty().WithMessage(SD.ValidationMessages.DistrictMessage.NameRequired)
                 .MinimumLength(2).WithMessage(SD.ValidationMessages.DistrictMessage.NameLength)
-                .MaximumLength(50).WithMessage(SD.ValidationMessages.DistrictMessage.NameLength)
-                .MustAsync(async (name, _) =>
-                    {
-                        return !await districtRepository.IsAnyDistrict(name);
-                    }).WithMessage(SD.ValidationMessages.DistrictMessage.NameUnique);
+                .MaximumLength(50).WithMessage(SD.ValidationMessages.DistrictMessage.NameLength);
 
             RuleFor(d => d.CityId)
-                .NotEmpty().WithMessage("City is required")
-                .MustAsync(async (cityId, _) =>
-                {
-                    return await cityRepository.IsAnyCity(cityId);
-                }).WithMessage(SD.ValidationMessages.DistrictMessage.CityInvalid);
+                .NotEmpty().WithMessage(SD.ValidationMessages.DistrictMessage.CityRequired);
+
+
         }
     }
 }

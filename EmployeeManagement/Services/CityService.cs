@@ -38,9 +38,20 @@ namespace EmployeeManagement.Services
             return await _cityRepository.GetAsync(e => e.CityId == id);
         }
 
-        public async Task<ValidationResult> AddAsync(City city)
+        public async Task<ValidationResult> ValidateCity(City city)
         {
             var validationResult = await _cityValidator.ValidateAsync(city);
+            var isAnyCity = await _cityRepository.IsAnyCity(city.Name, city.CityId);
+            if (isAnyCity)
+            {
+                validationResult.Errors.Add(new ValidationFailure("Name", SD.ValidationMessages.CityMessage.NameUnique));
+            }
+            return validationResult;
+        }
+
+        public async Task<ValidationResult> AddAsync(City city)
+        {
+            var validationResult = await ValidateCity(city);
             if (!validationResult.IsValid)
             {
                 return validationResult;
@@ -60,7 +71,7 @@ namespace EmployeeManagement.Services
 
         public async Task<ValidationResult> UpdateAsync(City city)
         {
-            var validationResult = await _cityValidator.ValidateAsync(city);
+            var validationResult = await ValidateCity(city);
             if (!validationResult.IsValid)
             {
                 return validationResult;

@@ -11,17 +11,36 @@ namespace EmployeeManagement.Services
     public class DistrictService : IDistrictService
     {
         private readonly IDistrictRepository _districtRepository;
+        private readonly ICityRepository _cityRepository;
         private readonly IValidator<District> _districtValidator;
 
-        public DistrictService(IDistrictRepository districtRepository, IValidator<District> districtValidator)
+        public DistrictService(IDistrictRepository districtRepository, IValidator<District> districtValidator, ICityRepository cityRepository)
         {
             _districtRepository = districtRepository;
             _districtValidator = districtValidator;
+            _cityRepository = cityRepository;
+        }
+
+        public async Task<ValidationResult> ValidateDistrict(District entity)
+        {
+            var validationResult = await _districtValidator.ValidateAsync(entity);
+            var isNameDuplicate = await _districtRepository.IsAnyDistrict(entity.Name, entity.DistrictId);
+            var isAnyCity = await _cityRepository.IsAnyCity(entity.CityId);
+
+            if (isNameDuplicate)
+            {
+                validationResult.Errors.Add(new ValidationFailure("Name", SD.ValidationMessages.DistrictMessage.NameUnique));
+            }
+            if (!isAnyCity)
+            {
+                validationResult.Errors.Add(new ValidationFailure("City", SD.ValidationMessages.DistrictMessage.CityInvalid));
+            }
+            return validationResult;
         }
 
         public async Task<ValidationResult> AddAsync(District entity)
         {
-            var validationResult = await _districtValidator.ValidateAsync(entity);
+            var validationResult = await ValidateDistrict(entity);
             if (!validationResult.IsValid)
             {
                 return validationResult;
@@ -38,7 +57,7 @@ namespace EmployeeManagement.Services
             return entity;
         }
 
-        public async Task<IEnumerable<District>> GetAllAsync(Filter filter = null)
+        public async Task<IEnumerable<District>> GetAllAsync(Filter? filter = null)
         {
             var districts = _districtRepository.GetAllAsync().Select(d => new District
             {
@@ -79,7 +98,7 @@ namespace EmployeeManagement.Services
 
         public async Task<ValidationResult> UpdateAsync(District entity)
         {
-            var validationResult = await _districtValidator.ValidateAsync(entity);
+            var validationResult = await ValidateDistrict(entity);
             if (!validationResult.IsValid)
             {
                 return validationResult;

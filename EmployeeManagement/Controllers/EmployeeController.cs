@@ -82,5 +82,35 @@ namespace EmployeeManagement.Controllers
             var employee = await _employeeService.GetByIdAsync(id);
             return View(employee);
         }
+
+        public async Task<IActionResult> ExportAllEmployees()
+        {
+
+            var fileBytes = await _employeeService.ExportEmployee();
+
+            // Return the file as a downloadable Excel file
+            return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "AllEmployees.xlsx");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ImportEmployees(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                TempData["Error"] = "Please select a file.";
+                return RedirectToAction("Index");
+            }
+
+            var errors = await _employeeService.ImportEmployees(file);
+
+            if (errors.Count > 0)
+            {
+                TempData["Error"] = String.Join("\n", errors);
+                return RedirectToAction("Index");
+            }
+            TempData["Success"] = "Import successful!";
+            return RedirectToAction("Index");
+        }
+
     }
 }

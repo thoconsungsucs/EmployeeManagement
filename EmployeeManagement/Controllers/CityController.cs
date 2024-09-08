@@ -38,6 +38,7 @@ namespace EmployeeManagement.Controllers
                 result.AddToModelState(this.ModelState);
                 return View(nameof(Create), city);
             }
+            TempData["Success"] = "City added successfully";
             return RedirectToAction("Index");
         }
 
@@ -64,6 +65,7 @@ namespace EmployeeManagement.Controllers
                 return View(nameof(Edit), city);
             }
             await _cityService.UpdateAsync(city);
+            TempData["Success"] = "City updated successfully";
             return RedirectToAction("Index");
         }
 
@@ -79,6 +81,7 @@ namespace EmployeeManagement.Controllers
         public async Task<ActionResult> Delete(City city)
         {
             await _cityService.DeleteAsync(city);
+            TempData["Success"] = "City deleted successfully";
             return RedirectToAction("Index");
         }
 

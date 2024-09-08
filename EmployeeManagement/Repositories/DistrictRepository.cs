@@ -12,9 +12,9 @@ namespace EmployeeManagement.Repositories
         {
             _context = context;
         }
-        public async Task<bool> IsAnyDistrict(string name)
+        public async Task<bool> IsAnyDistrict(string name, int id)
         {
-            return await _context.Districts.AnyAsync(d => d.Name.ToLower() == name.ToLower());
+            return await _context.Districts.AnyAsync(d => d.Name.ToLower() == name.ToLower() && d.DistrictId != id);
         }
 
         public async Task<bool> IsAnyDistrict(int id)

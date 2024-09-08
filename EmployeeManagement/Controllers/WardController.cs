@@ -22,7 +22,7 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             return View();
         }
@@ -38,6 +38,7 @@ namespace EmployeeManagement.Controllers
                 result.AddToModelState(this.ModelState);
                 return View(nameof(Create), ward);
             }
+            TempData["Success"] = "Ward added successfully";
             return RedirectToAction("Index");
         }
 
@@ -84,6 +85,7 @@ namespace EmployeeManagement.Controllers
                 });
                 return View(nameof(Edit), wardVM);
             }
+            TempData["Success"] = "Ward updated successfully";
             return RedirectToAction("Index");
         }
 
@@ -97,6 +99,7 @@ namespace EmployeeManagement.Controllers
         public async Task<IActionResult> Delete(Ward ward)
         {
             await _wardService.DeleteAsync(ward);
+            TempData["Success"] = "Ward deleted successfully";
             return RedirectToAction("Index");
         }
 
