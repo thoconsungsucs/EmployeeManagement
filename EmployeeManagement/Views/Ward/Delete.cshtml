@@ -1,4 +1,4 @@
-﻿@model Ward
+﻿@model WardModel
 <div class="card mt-5 shadow border-0 rounded-3">
 
     <div class="card-header border-0 p-0 rounded-top-3 bg-primary p-4">
@@ -10,15 +10,14 @@
         <form method="post">
             <input asp-for="WardId" hidden/>
             <div class="mb-3">
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control p-2" placeholder="Enter District Name" disabled>
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="WardName" class="form-label"></label>
+                <input asp-for="WardName" class="form-control p-2" placeholder="Enter District Name" disabled>
+                <span asp-validation-for="WardName" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="District.Name" class="form-label">District Name</label>
-                <input asp-for="District.Name" class="form-control p-2" disabled>
-                </select>
+                <label asp-for="DistrictName" class="form-label">District Name</label>
+                <input asp-for="DistrictName" class="form-control p-2" disabled>
             </div>
 
             <div class="row mt-4">

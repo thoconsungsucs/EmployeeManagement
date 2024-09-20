@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Ward>
+﻿@model IEnumerable<WardModel>
 
 <div class="container">
     <partial name="_Notifications" />
@@ -38,9 +38,9 @@
             {
                 <tr>
                     <td>@Ward.WardId</td>
-                    <th>@Ward.Name</th>
-                    <th>@Ward.District?.City?.Name</th>
-                    <th>@Ward.District?.Name</th>
+                    <th>@Ward.WardName</th>
+                    <th>@Ward.CityName</th>
+                    <th>@Ward.DistrictName</th>
                     <td class="text-end w-25 p-0 align-content-center">
                         <div class="btn-group" style="min-width: 150px;">
                             <a asp-controller="Ward" asp-action="Edit" asp-route-id="@Ward.WardId" class="btn btn-primary">

@@ -1,4 +1,4 @@
-﻿@model Employee
+﻿@model EmployeeModel
 <div class="card mt-5 shadow border-0 rounded-3">
     <div class="card-header border-0 p-0 rounded-top-3 bg-primary p-4">
         <div class="text-center align-content-center">
@@ -177,7 +177,7 @@
                             if (response.data && response.data.length > 0) {
                                 $('#districtSelect').find('option:not(:first)').remove();
                                 response.data.forEach(function (district) {
-                                    $('#districtSelect').append(new Option(district.name, district.districtId));
+                                    $('#districtSelect').append(new Option(district.districtName, district.districtId));
                                 });
                                 $('#districtSelect').val('@Model.DistrictId').change(); // Set district and trigger change
                                 document.getElementById('districtSelect').disabled = false;
@@ -202,7 +202,7 @@
                             if (response.data && response.data.length > 0) {
                                 $('#wardSelect').find('option:not(:first)').remove();
                                 response.data.forEach(function (ward) {
-                                    $('#wardSelect').append(new Option(ward.name, ward.wardId));
+                                    $('#wardSelect').append(new Option(ward.wardName, ward.wardId));
                                 });
                                 $('#wardSelect').val('@Model.WardId'); // Set selected ward based on model
                                 document.getElementById('wardSelect').disabled = false;

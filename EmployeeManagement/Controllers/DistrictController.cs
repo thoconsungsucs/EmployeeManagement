@@ -1,6 +1,7 @@
 ﻿using EmployeeManagement.Interfaces.IServices;
 using EmployeeManagement.Models;
 using EmployeeManagement.Models.ViewModels;
+using EmployeeManagement.ModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -17,17 +18,17 @@ namespace EmployeeManagement.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var districts = await _districtService.GetAllAsync();
+            var districts = await _districtService.GetAllFilterAsync();
             return View(districts);
         }
 
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var cities = await _cityService.GetAllAsync();
+            var cities = await _cityService.GetAllFilterAsync();
             var districtVM = new DistrictVM
             {
-                District = new District(),
+                DistrictModel = new DistrictModel(),
                 Cities = cities.Select(c => new SelectListItem
                 {
                     Text = c.Name,
@@ -54,7 +55,7 @@ namespace EmployeeManagement.Controllers
                 });
                 return View(districtVM);
             }
-            var result = await _districtService.AddAsync(districtVM.District);
+            var result = await _districtService.AddAsync(districtVM.DistrictModel);
             if (!result.IsValid)
             {
                 // Get City list
@@ -76,7 +77,7 @@ namespace EmployeeManagement.Controllers
         {
             var districtVM = new DistrictVM
             {
-                District = await _districtService.GetByIdAsync(id),
+                DistrictModel = await _districtService.GetByIdAsync(id),
                 Cities = (await _cityService.GetAllAsync()).Select(c => new SelectListItem
                 {
                     Text = c.Name,
@@ -101,7 +102,7 @@ namespace EmployeeManagement.Controllers
                 });
                 return View(districtVM);
             }
-            var result = await _districtService.UpdateAsync(districtVM.District);
+            var result = await _districtService.UpdateAsync(districtVM.DistrictModel);
             if (!result.IsValid)
             {
                 // Model is invalid, add errors to ModelState
@@ -127,7 +128,7 @@ namespace EmployeeManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(District district)
         {
-            await _districtService.DeleteAsync(district);
+            await _districtService.DeleteAsync(district.DistrictId);
             TempData["Success"] = "District deleted successfully";
             return RedirectToAction("Index");
         }

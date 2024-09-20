@@ -9,7 +9,7 @@ namespace EmployeeManagement.Models
         [Required]
         public int CityId { get; set; }
 
-        public City? City { get; set; }
+        public City? City { get; set; } = null;
         public List<Ward> Wards { get; set; } = new List<Ward>();
     }
 }

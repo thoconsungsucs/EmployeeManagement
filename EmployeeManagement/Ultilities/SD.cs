@@ -2,6 +2,12 @@
 {
     public static class SD
     {
+        public const int NumberOfDiploma = 3;
+        public const int MinimumNameLength = 2;
+        public const int MaximumNameLength = 50;
+        public const int PhoneNumberLength = 10;
+        public const int IdentityIdLength = 12;
+        public const int AgeLimit = 18;
         public static class ValidationMessages
         {
             public static class DiplomaMessage
@@ -15,6 +21,7 @@
                 public const string NameRequired = "City name is required";
                 public const string NameLength = "City name must be between 2 and 50 characters";
                 public const string NameRegex = "City name can only contain letters";
+                public const string CityInvalid = "City is invalid";
             }
 
             public static class DistrictMessage
@@ -29,6 +36,7 @@
 
             public static class WardMessage
             {
+                public const string NotFound = "Ward not found";
                 public const string NameUnique = "Ward name already exists";
                 public const string NameRequired = "Ward name is required";
                 public const string NameLength = "Ward name must be between 2 and 50 characters";

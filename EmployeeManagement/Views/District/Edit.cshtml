@@ -8,15 +8,15 @@
     </div>
     <div class="card-body">
         <form method="post">
-            <input asp-for="District.DistrictId" hidden />
+            <input asp-for="DistrictModel.DistrictId" hidden />
             <div class="mb-3">
-                <label asp-for="District.Name" class="form-label"></label>
-                <input asp-for="District.Name" class="form-control p-2" placeholder="Enter District Name">
+                <label asp-for="DistrictModel.DistrictName" class="form-label"></label>
+                <input asp-for="DistrictModel.DistrictName" class="form-control p-2" placeholder="Enter District Name">
             </div>
 
             <div class="mb-3">
-                <label asp-for="District.CityId" class="form-label">City Name</label>
-                <select asp-for="District.CityId" asp-items="Model.Cities" class="form-control p-2">
+                <label asp-for="DistrictModel.CityId" class="form-label">City Name</label>
+                <select asp-for="DistrictModel.CityId" asp-items="Model.Cities" class="form-control p-2">
                     <option disabled selected>--Select City--</option>
                 </select>
             </div>

@@ -1,4 +1,4 @@
-﻿@model Employee
+﻿@model EmployeeModel
 
 <div class="card mt-5 shadow border-0 rounded-3">
     <div class="card-header border-0 p-0 rounded-top-3 bg-primary p-4">
@@ -154,7 +154,7 @@
                                 if (response.data && response.data.length > 0) {
                                     $('#districtSelect').find('option:not(:first)').remove();
                                     response.data.forEach(function (district) {
-                                        $('#districtSelect').append(new Option(district.name, district.districtId));
+                                        $('#districtSelect').append(new Option(district.districtName, district.districtId));
                                     });
                                     $('#districtSelect').prop('disabled', false);
                                 } else {
@@ -180,7 +180,7 @@
                                 if (response.data && response.data.length > 0) {
                                     $('#wardSelect').find('option:not(:first)').remove();
                                     response.data.forEach(function (ward) {
-                                        $('#wardSelect').append(new Option(ward.name, ward.wardId));
+                                        $('#wardSelect').append(new Option(ward.wardName, ward.wardId));
                                     });
                                     $('#wardSelect').prop('disabled', false);
                                 } else {

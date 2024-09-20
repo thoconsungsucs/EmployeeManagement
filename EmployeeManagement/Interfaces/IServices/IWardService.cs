@@ -1,4 +1,4 @@
-﻿using EmployeeManagement.Models;
+﻿using EmployeeManagement.ModelViews;
 using EmployeeManagement.Ultilities;
 using FluentValidation.Results;
 
@@ -6,11 +6,12 @@ namespace EmployeeManagement.Interfaces.IServices
 {
     public interface IWardService
     {
-        Task<IEnumerable<Ward>> GetAllAsync(Filter filter = null);
-        Task<IEnumerable<Ward>> GetAllAsync(int districts);
-        Task<Ward> GetByIdAsync(int id);
-        Task<ValidationResult> AddAsync(Ward ward);
-        Task<ValidationResult> UpdateAsync(Ward ward);
-        Task<Ward> DeleteAsync(Ward ward);
+        Task<IEnumerable<WardModel>> GetAllFilterAsync(Filter filter = null);
+        Task<IEnumerable<WardModel>> GetAllAsync(int districtId);
+        Task<IEnumerable<WardModel>> GetAllAsync();
+        Task<WardModel> GetByIdAsync(int id);
+        Task<ValidationResult> AddAsync(WardModel ward);
+        Task<ValidationResult> UpdateAsync(WardModel ward);
+        Task<ValidationResult> DeleteAsync(WardModel ward);
     }
 }

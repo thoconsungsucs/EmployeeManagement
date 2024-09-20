@@ -1,4 +1,4 @@
-﻿@model Employee
+﻿@model EmployeeModel
 @{
     ViewData["Title"] = "Details";
 }
@@ -13,11 +13,11 @@
     <p><strong>Age:</strong> @Model.Age</p>
     <p><strong>Phone Number:</strong> @Model.PhoneNumber</p>
     <p><strong>Identity ID:</strong> @Model.IdentityId</p>
-    <p><strong>Job:</strong> @Model.Job?.Title</p>
-    <p><strong>Ethic:</strong> @Model.Ethic?.Name</p>
-    <p><strong>Ward:</strong> @Model.Ward?.Name</p>
-    <p><strong>District:</strong> @Model.District?.Name</p>
-    <p><strong>City:</strong> @Model.City?.Name</p>
+    <p><strong>Job:</strong> @Model.JobTitle</p>
+    <p><strong>Ethic:</strong> @Model.EthicName</p>
+    <p><strong>Ward:</strong> @Model.WardName</p>
+    <p><strong>District:</strong> @Model.DistrictName</p>
+    <p><strong>City:</strong> @Model.CityName</p>
     <p><strong>Address:</strong> @Model.Address</p>
 </div>
 

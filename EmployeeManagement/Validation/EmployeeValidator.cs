@@ -1,25 +1,22 @@
-﻿using EmployeeManagement.Interfaces.IRepositories;
-using EmployeeManagement.Models;
+﻿using EmployeeManagement.ModelViews;
 using EmployeeManagement.Ultilities;
 using FluentValidation;
 
 namespace EmployeeManagement.Validation
 {
-    public class EmployeeValidator : AbstractValidator<Employee>
+    public class EmployeeValidator : AbstractValidator<EmployeeModel>
     {
-        public EmployeeValidator(ICityRepository cityRepository, IDistrictRepository districtRepository, IWardRepository wardRepository, IEmployeeRepository employeeRepository)
+        public EmployeeValidator()
         {
-
             RuleFor(x => x.Name)
-                .NotEmpty().WithMessage(SD.ValidationMessages.EmployeeMessage.NameLength)
                 .Matches(@"^[a-zA-Z\s]+$").WithMessage(SD.ValidationMessages.EmployeeMessage.NameInvalid)
-                .MinimumLength(2).WithMessage(SD.ValidationMessages.EmployeeMessage.NameLength)
-                .MaximumLength(50).WithMessage(SD.ValidationMessages.EmployeeMessage.NameLength);
+                .Length(SD.MinimumNameLength, SD.MaximumNameLength).WithMessage(SD.ValidationMessages.EmployeeMessage.NameLength);
             RuleFor(x => x.DateOfBirth)
                 .NotEmpty().WithMessage(SD.ValidationMessages.EmployeeMessage.DateOfBirthRequired)
-                .Must(x => x.Year < System.DateTime.Now.Year - 18).WithMessage(SD.ValidationMessages.EmployeeMessage.DateOfBirthInvalid);
+                .Must(x => x.Year < System.DateTime.Now.Year - SD.AgeLimit).WithMessage(SD.ValidationMessages.EmployeeMessage.DateOfBirthInvalid);
             RuleFor(x => x.PhoneNumber)
-                .Matches(@"^\d{10}$").WithMessage(SD.ValidationMessages.EmployeeMessage.PhoneNumberInvalid).When(x => x.PhoneNumber != null);
+               .Matches(@"^\d{" + SD.PhoneNumberLength + "}$").WithMessage(SD.ValidationMessages.EmployeeMessage.PhoneNumberInvalid)
+                .When(x => x.PhoneNumber != null);
 
             RuleFor(x => x.Diplomas)
                 .Must(diplomas => diplomas.All(d => d.IssuedDate < d.ExpiryDate))

@@ -48,6 +48,8 @@ namespace EmployeeManagement
             builder.Services.AddScoped<IJobService, JobService>();
             builder.Services.AddScoped<IDiplomaService, DiplomaService>();
 
+            builder.Services.AddAutoMapper(typeof(Program));
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

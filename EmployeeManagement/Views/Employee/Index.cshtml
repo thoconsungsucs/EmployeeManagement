@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Employee>
+﻿@model IEnumerable<EmployeeModel>
 
 <div class="container">
     <partial name="_Notifications" />
@@ -81,11 +81,11 @@
                     <th>@Employee.PhoneNumber</th>
                     <th>@Employee.DateOfBirth</th>
                     <th>@Employee.Age</th>
-                    <th>@Employee.Job?.Title</th>
-                    <th>@Employee.Ethic?.Name</th>
-                    <th>@Employee.City?.Name</th>
-                    <th>@Employee.District?.Name</th>
-                    <th>@Employee.Ward?.Name</th>
+                    <th>@Employee.JobTitle</th>
+                    <th>@Employee.EthicName</th>
+                    <th>@Employee.CityName</th>
+                    <th>@Employee.DistrictName</th>
+                    <th>@Employee.WardName</th>
                     <th>@Employee.Address</th>
                     <th>@Employee.Diplomas.Count</th>
 

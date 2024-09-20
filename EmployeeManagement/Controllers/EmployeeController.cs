@@ -1,5 +1,5 @@
 ﻿using EmployeeManagement.Interfaces.IServices;
-using EmployeeManagement.Models;
+using EmployeeManagement.ModelViews;
 using EmployeeManagement.Ultilities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +16,7 @@ namespace EmployeeManagement.Controllers
 
         public async Task<IActionResult> Index(Filter? filter)
         {
-            var employeeList = await _employeeService.GetAllAsync(filter);
+            var employeeList = await _employeeService.GetAllFilterAsync(filter);
             return View(employeeList);
         }
 
@@ -26,17 +26,17 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Employee employee)
+        public async Task<IActionResult> Create(EmployeeModel employeeModel)
         {
             if (!ModelState.IsValid)
             {
-                return View(employee);
+                return View(employeeModel);
             }
-            var result = await _employeeService.AddAsync(employee);
+            var result = await _employeeService.AddAsync(employeeModel);
             if (!result.IsValid)
             {
                 result.AddToModelState(this.ModelState);
-                return View(employee);
+                return View(employeeModel);
             }
             return RedirectToAction("Index");
         }
@@ -48,17 +48,17 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Employee employee)
+        public async Task<IActionResult> Edit(EmployeeModel employeeModel)
         {
             if (!ModelState.IsValid)
             {
-                return View(employee);
+                return View(employeeModel);
             }
-            var result = await _employeeService.UpdateAsync(employee);
+            var result = await _employeeService.UpdateAsync(employeeModel);
             if (!result.IsValid)
             {
                 result.AddToModelState(this.ModelState);
-                return View(employee);
+                return View(employeeModel);
             }
             return RedirectToAction("Index");
         }
@@ -70,9 +70,9 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(Employee employee)
+        public async Task<IActionResult> Delete(EmployeeModel employeeModel)
         {
-            await _employeeService.DeleteAsync(employee);
+            await _employeeService.DeleteAsync(employeeModel.EmployeeId);
             return RedirectToAction("Index");
         }
 

@@ -1,6 +1,6 @@
 ﻿using EmployeeManagement.Interfaces.IServices;
-using EmployeeManagement.Models;
 using EmployeeManagement.Models.ViewModels;
+using EmployeeManagement.ModelViews;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -17,7 +17,7 @@ namespace EmployeeManagement.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var wards = await _wardService.GetAllAsync();
+            var wards = await _wardService.GetAllFilterAsync();
             return View(wards);
         }
 
@@ -28,15 +28,15 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Ward ward)
+        public async Task<IActionResult> Create(WardModel wardModel)
         {
 
-            var result = await _wardService.AddAsync(ward);
+            var result = await _wardService.AddAsync(wardModel);
             if (!result.IsValid)
             {
                 // Model is invalid, add errors to ModelState
                 result.AddToModelState(this.ModelState);
-                return View(nameof(Create), ward);
+                return View(nameof(Create), wardModel);
             }
             TempData["Success"] = "Ward added successfully";
             return RedirectToAction("Index");
@@ -47,10 +47,10 @@ namespace EmployeeManagement.Controllers
         {
             var wardVM = new WardVM
             {
-                Ward = await _wardService.GetByIdAsync(id),
+                WardModel = await _wardService.GetByIdAsync(id),
                 Districts = (await _districtService.GetAllAsync()).Select(c => new SelectListItem
                 {
-                    Text = c.Name,
+                    Text = c.DistrictName,
                     Value = c.DistrictId.ToString()
                 })
             };
@@ -67,12 +67,12 @@ namespace EmployeeManagement.Controllers
                 // Get District list
                 wardVM.Districts = (await _districtService.GetAllAsync()).Select(d => new SelectListItem
                 {
-                    Text = d.Name,
+                    Text = d.DistrictName,
                     Value = d.DistrictId.ToString()
                 });
                 return View(wardVM);
             }
-            var result = await _wardService.UpdateAsync(wardVM.Ward);
+            var result = await _wardService.UpdateAsync(wardVM.WardModel);
             if (!result.IsValid)
             {
                 // Model is invalid, add errors to ModelState
@@ -80,7 +80,7 @@ namespace EmployeeManagement.Controllers
                 // Get District list
                 wardVM.Districts = (await _districtService.GetAllAsync()).Select(d => new SelectListItem
                 {
-                    Text = d.Name,
+                    Text = d.DistrictName,
                     Value = d.DistrictId.ToString()
                 });
                 return View(nameof(Edit), wardVM);
@@ -96,9 +96,9 @@ namespace EmployeeManagement.Controllers
             return View(ward);
         }
         [HttpPost]
-        public async Task<IActionResult> Delete(Ward ward)
+        public async Task<IActionResult> Delete(WardModel wardModel)
         {
-            await _wardService.DeleteAsync(ward);
+            await _wardService.DeleteAsync(wardModel);
             TempData["Success"] = "Ward deleted successfully";
             return RedirectToAction("Index");
         }

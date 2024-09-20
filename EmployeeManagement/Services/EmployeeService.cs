@@ -1,8 +1,10 @@
-﻿using ClosedXML.Excel;
+﻿using AutoMapper;
+using ClosedXML.Excel;
 using EmployeeManagement.Interfaces;
 using EmployeeManagement.Interfaces.IRepositories;
 using EmployeeManagement.Interfaces.IServices;
 using EmployeeManagement.Models;
+using EmployeeManagement.ModelViews;
 using EmployeeManagement.Ultilities;
 using FluentValidation;
 using FluentValidation.Results;
@@ -12,7 +14,7 @@ namespace EmployeeManagement.Services
 {
     public class EmployeeService : IEmployeeService
     {
-        private readonly IValidator<Employee> _employeeValidator;
+        private readonly IValidator<EmployeeModel> _employeeValidator;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IDistrictRepository _districtRepository;
         private readonly IWardRepository _wardRepository;
@@ -21,17 +23,19 @@ namespace EmployeeManagement.Services
         private readonly IDiplomaRepository _diplomaRepository;
         private readonly IExporter _exporter;
         private readonly ICityRepository _cityRepository;
+        private readonly IMapper _mapper;
 
         public EmployeeService(
             IEmployeeRepository employeeRepository,
-            IValidator<Employee> employeeValidator,
+            IValidator<EmployeeModel> employeeValidator,
             IDistrictRepository districtRepository,
             IWardRepository wardRepository,
             IDiplomaRepository diplomaRepository,
             IExporter exporter,
             IJobRepository jobRepository,
             IEthicRepository ethicRepository,
-            ICityRepository cityRepository)
+            ICityRepository cityRepository,
+            IMapper mapper)
         {
             _employeeRepository = employeeRepository;
             _employeeValidator = employeeValidator;
@@ -42,9 +46,10 @@ namespace EmployeeManagement.Services
             _ethicRepository = ethicRepository;
             _jobRepository = jobRepository;
             _cityRepository = cityRepository;
+            _mapper = mapper;
         }
 
-        public async Task<ValidationResult> ValidateEmployee(Employee employee)
+        public async Task<ValidationResult> ValidateEmployee(EmployeeModel employee)
         {
             var validationResult = await _employeeValidator.ValidateAsync(employee);
             var doesBelongToDistrict = await _wardRepository.DoesBelongToDistrict(employee.DistrictId, employee.WardId);
@@ -67,31 +72,38 @@ namespace EmployeeManagement.Services
             return validationResult;
         }
 
-        public async Task<ValidationResult> AddAsync(Employee employee)
+        public async Task<ValidationResult> AddAsync(EmployeeModel employeeModel)
         {
             // Update age
-            employee.Age = DateTime.Now.Year - employee.DateOfBirth.Year;
+            employeeModel.Age = DateTime.Now.Year - employeeModel.DateOfBirth.Year;
 
-            var validationResult = await ValidateEmployee(employee);
+            var validationResult = await ValidateEmployee(employeeModel);
             if (!validationResult.IsValid)
             {
                 return validationResult;
             }
-
+            var employee = _mapper.Map<Employee>(employeeModel);
             await _employeeRepository.AddAsync(employee);
             await _employeeRepository.SaveAsync();
 
             return validationResult;
         }
 
-        public async Task<Employee> DeleteAsync(Employee employee)
+        public async Task<ValidationResult> DeleteAsync(int employeeId)
         {
+            var employee = await _employeeRepository.GetAsync(e => e.EmployeeId == employeeId);
+            var validationResult = new ValidationResult();
+            if (employee == null)
+            {
+                validationResult.Errors.Add(new ValidationFailure("Employee", "Employee not found"));
+                return validationResult;
+            }
             _employeeRepository.Delete(employee);
             await _employeeRepository.SaveAsync();
-            return employee;
+            return validationResult;
         }
 
-        public async Task<IEnumerable<Employee>> GetAllAsync(Filter filter = null)
+        public IQueryable<Employee> GetEmployeesInculeAllInformationAsync()
         {
             var employees = _employeeRepository.GetAllAsync()
                 .Select(e => new Employee
@@ -131,7 +143,11 @@ namespace EmployeeManagement.Services
                         ExpiryDate = d.ExpiryDate
                     }).ToList()
                 });
+            return employees;
+        }
 
+        public async Task<IEnumerable<Employee>> FilterEmployee(IQueryable<Employee> employees, Filter? filter)
+        {
             if (filter == null)
             {
                 return await employees.ToArrayAsync();
@@ -145,15 +161,30 @@ namespace EmployeeManagement.Services
                 .ToArrayAsync();
         }
 
-        public async Task<Employee> GetByIdAsync(int id)
+        public async Task<IEnumerable<EmployeeModel>> GetAllFilterAsync(Filter? filter = null)
         {
-            return await _employeeRepository.GetAsync(e => e.EmployeeId == id, includeProperties: "Diplomas,City,District,Ward,Job,Ethic");
+            var employees = GetEmployeesInculeAllInformationAsync();
+
+            var filteredEmployees = await FilterEmployee(employees, filter);
+            return _mapper.Map<IEnumerable<EmployeeModel>>(filteredEmployees);
         }
 
-        public async Task<ValidationResult> UpdateAsync(Employee employee)
+        public async Task<EmployeeModel> GetByIdAsync(int id)
         {
-            var validationResult = await ValidateEmployee(employee);
+            var employee = await _employeeRepository.GetAsync(e => e.EmployeeId == id, includeProperties: "Diplomas,City,District,Ward,Job,Ethic");
+            return _mapper.Map<EmployeeModel>(employee);
+        }
 
+        public async Task<ValidationResult> UpdateAsync(EmployeeModel employeeModel)
+        {
+            var validationResult = await ValidateEmployee(employeeModel);
+
+            var employee = await _employeeRepository.GetAsync(e => e.EmployeeId == employeeModel.EmployeeId);
+            if (employee == null)
+            {
+                validationResult.Errors.Add(new ValidationFailure("Employee", "Employee not found"));
+                return validationResult;
+            }
             if (!validationResult.IsValid)
             {
                 return validationResult;
@@ -208,7 +239,7 @@ namespace EmployeeManagement.Services
             return fileByte;
         }
 
-        public async Task<Employee> CreateEmployeeFromExcel(IXLRow row)
+        public async Task<EmployeeModel> CreateEmployeeFromExcel(IXLRow row)
         {
             var name = row.Cell(1).GetValue<string>()?.Trim();
 
@@ -235,7 +266,7 @@ namespace EmployeeManagement.Services
             var cityId = (await _cityRepository.GetAsync(c => c.Name == cityName))?.CityId;
             var address = row.Cell(11).GetValue<string>()?.Trim();
 
-            var employee = new Employee
+            var employee = new EmployeeModel
             {
                 Name = name,
                 DateOfBirth = dateOfBirth,
@@ -280,15 +311,16 @@ namespace EmployeeManagement.Services
                             continue;
                         }
 
-                        var employee = await CreateEmployeeFromExcel(row);
+                        var employeeModel = await CreateEmployeeFromExcel(row);
 
-                        var validationResult = await ValidateEmployee(employee);
+                        var validationResult = await ValidateEmployee(employeeModel);
                         if (!validationResult.IsValid)
                         {
                             errors.Add($"Row {rowIndex}: {validationResult.ToString()}");
                         }
                         else
                         {
+                            var employee = _mapper.Map<Employee>(employeeModel);
                             await _employeeRepository.AddAsync(employee);
                             await _employeeRepository.SaveAsync();
                         }

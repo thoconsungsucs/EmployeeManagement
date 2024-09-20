@@ -1,4 +1,4 @@
-﻿@model Ward
+﻿@model WardModel
 <div class="card mt-5 shadow border-0 rounded-3">
 
     <div class="card-header border-0 p-0 rounded-top-3 bg-primary p-4">
@@ -9,8 +9,8 @@
     <div class="card-body">
         <form method="post">
             <div class="mb-3">
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control p-2" placeholder="Enter District Name">
+                <label asp-for="WardName" class="form-label"></label>
+                <input asp-for="WardName" class="form-control p-2" placeholder="Enter District Name">
             </div>
 
             <div class="mb-3">
@@ -85,7 +85,7 @@
 
                             // Add district options
                             response.data.forEach(function (district) {
-                                $('#districtSelect').append(new Option(district.name, district.districtId));
+                                $('#districtSelect').append(new Option(district.districtName, district.districtId));
                             });
                             // Enable district select
                             document.getElementById('districtSelect').disabled = false;

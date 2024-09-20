@@ -1,4 +1,4 @@
-﻿@model IEnumerable<District>
+﻿@model IEnumerable<DistrictModel>
 
 <div class="container">
     <partial name="_Notifications" />
@@ -35,8 +35,8 @@
             {
                 <tr>
                     <td>@District.DistrictId</td>
-                    <th>@District.Name</th>
-                    <th>@District.City?.Name</th>
+                    <th>@District.DistrictName</th>
+                    <th>@District.CityName</th>
                     <td class="text-end w-25 p-0 align-content-center">
                         <div class="btn-group" style="min-width: 150px;">
                             <a asp-controller="District" asp-action="Edit" asp-route-id="@District.DistrictId" class="btn btn-primary">

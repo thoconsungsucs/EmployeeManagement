@@ -1,5 +1,5 @@
 ﻿using EmployeeManagement.Interfaces.IServices;
-using EmployeeManagement.Models;
+using EmployeeManagement.ModelViews;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManagement.Controllers
@@ -13,7 +13,7 @@ namespace EmployeeManagement.Controllers
         }
         public async Task<ActionResult> Index()
         {
-            var cityList = await _cityService.GetAllAsync();
+            var cityList = await _cityService.GetAllFilterAsync();
             return View(cityList);
         }
 
@@ -24,19 +24,19 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(City city)
+        public async Task<ActionResult> Create(CityModel cityModel)
         {
             // Validate the model
             if (!ModelState.IsValid)
             {
-                return View(city);
+                return View(cityModel);
             }
-            var result = await _cityService.AddAsync(city);
+            var result = await _cityService.AddAsync(cityModel);
             if (!result.IsValid)
             {
                 // Model is invalid, add errors to ModelState
                 result.AddToModelState(this.ModelState);
-                return View(nameof(Create), city);
+                return View(nameof(Create), cityModel);
             }
             TempData["Success"] = "City added successfully";
             return RedirectToAction("Index");
@@ -50,21 +50,21 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Edit(City city)
+        public async Task<ActionResult> Edit(CityModel cityModel)
         {
             // Validate the model
             if (!ModelState.IsValid)
             {
-                return View(city);
+                return View(cityModel);
             }
-            var result = await _cityService.UpdateAsync(city);
+            var result = await _cityService.UpdateAsync(cityModel);
             if (!result.IsValid)
             {
                 // Model is invalid, add errors to ModelState
                 result.AddToModelState(this.ModelState);
-                return View(nameof(Edit), city);
+                return View(nameof(Edit), cityModel);
             }
-            await _cityService.UpdateAsync(city);
+            await _cityService.UpdateAsync(cityModel);
             TempData["Success"] = "City updated successfully";
             return RedirectToAction("Index");
         }
@@ -72,15 +72,22 @@ namespace EmployeeManagement.Controllers
         [HttpGet]
         public async Task<ActionResult> Delete(int id)
         {
-            var city = await _cityService.GetByIdAsync(id);
+            var cityModel = await _cityService.GetByIdAsync(id);
+            if (cityModel == null) return NotFound();
 
-            return View(city);
+            return View(cityModel);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Delete(City city)
+        public async Task<ActionResult> Delete(CityModel cityModel)
         {
-            await _cityService.DeleteAsync(city);
+            var result = await _cityService.DeleteAsync(cityModel.CityId);
+            if (!result.IsValid)
+            {
+                // Model is invalid, add errors to ModelState
+                result.AddToModelState(this.ModelState);
+                return View(nameof(Delete), cityModel);
+            }
             TempData["Success"] = "City deleted successfully";
             return RedirectToAction("Index");
         }

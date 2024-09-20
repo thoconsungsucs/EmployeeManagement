@@ -1,5 +1,5 @@
 ﻿using EmployeeManagement.Interfaces.IServices;
-using EmployeeManagement.Models;
+using EmployeeManagement.ModelViews;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManagement.Controllers
@@ -15,19 +15,19 @@ namespace EmployeeManagement.Controllers
         [HttpGet]
         public ActionResult Create(int employeeId)
         {
-            return View(new Diploma { EmployeeId = employeeId });
+            return View(new DiplomaModel { EmployeeId = employeeId });
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(Diploma diploma)
+        public async Task<ActionResult> Create(DiplomaModel diplomaModel)
         {
-            var result = await _diplomaService.AddAsync(diploma);
+            var result = await _diplomaService.AddAsync(diplomaModel);
             if (!result.IsValid)
             {
                 result.AddToModelState(this.ModelState);
-                return View(diploma);
+                return View(diplomaModel);
             }
-            return RedirectToAction("Details", "Employee", new { id = diploma.EmployeeId });
+            return RedirectToAction("Details", "Employee", new { id = diplomaModel.EmployeeId });
         }
 
         [HttpGet]
@@ -38,22 +38,22 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Edit(Diploma diploma)
+        public async Task<ActionResult> Edit(DiplomaModel diplomaModel)
         {
-            var result = await _diplomaService.UpdateAsync(diploma);
+            var result = await _diplomaService.UpdateAsync(diplomaModel);
             if (!result.IsValid)
             {
                 result.AddToModelState(this.ModelState);
-                return View(diploma);
+                return View(diplomaModel);
             }
             TempData["Success"] = "Diploma updated successfully";
-            return RedirectToAction("Details", "Employee", new { id = diploma.EmployeeId });
+            return RedirectToAction("Details", "Employee", new { id = diplomaModel.EmployeeId });
         }
 
         public async Task<ActionResult> Delete(int id)
         {
             var diploma = await _diplomaService.GetDiplomaById(id);
-            await _diplomaService.DeleteAsync(diploma);
+            await _diplomaService.DeleteAsync(id);
             TempData["Success"] = "Diploma deleted successfully";
             return RedirectToAction("Details", "Employee", new { id = diploma.EmployeeId });
         }

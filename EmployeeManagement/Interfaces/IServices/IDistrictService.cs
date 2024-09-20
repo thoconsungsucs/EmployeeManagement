@@ -1,4 +1,4 @@
-﻿using EmployeeManagement.Models;
+﻿using EmployeeManagement.ModelViews;
 using EmployeeManagement.Ultilities;
 using FluentValidation.Results;
 
@@ -6,11 +6,12 @@ namespace EmployeeManagement.Interfaces.IServices
 {
     public interface IDistrictService
     {
-        Task<IEnumerable<District>> GetAllAsync(Filter filter = null);
-        Task<IEnumerable<District>> GetAllAsync(int cityId);
-        Task<District> GetByIdAsync(int id);
-        Task<ValidationResult> AddAsync(District entity);
-        Task<ValidationResult> UpdateAsync(District entity);
-        Task<District> DeleteAsync(District entity);
+        Task<IEnumerable<DistrictModel>> GetAllFilterAsync(Filter? filter = null);
+        Task<IEnumerable<DistrictModel>> GetAllAsync(int cityId);
+        Task<IEnumerable<DistrictModel>> GetAllAsync();
+        Task<DistrictModel> GetByIdAsync(int id);
+        Task<ValidationResult> AddAsync(DistrictModel entity);
+        Task<ValidationResult> UpdateAsync(DistrictModel entity);
+        Task<ValidationResult> DeleteAsync(int districtId);
     }
 }

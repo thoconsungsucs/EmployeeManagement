@@ -1,6 +1,8 @@
-﻿using EmployeeManagement.Interfaces.IRepositories;
+﻿using AutoMapper;
+using EmployeeManagement.Interfaces.IRepositories;
 using EmployeeManagement.Interfaces.IServices;
 using EmployeeManagement.Models;
+using EmployeeManagement.ModelViews;
 using EmployeeManagement.Ultilities;
 using FluentValidation;
 using FluentValidation.Results;
@@ -11,17 +13,23 @@ namespace EmployeeManagement.Services
     public class WardService : IWardService
     {
         private readonly IWardRepository _wardRepository;
-        private readonly IValidator<Ward> _wardValidator;
+        private readonly IValidator<WardModel> _wardValidator;
         private readonly IDistrictRepository _districtRepository;
+        private readonly IMapper _mapper;
 
-        public WardService(IWardRepository WardRepository, IValidator<Ward> WardValidator, IDistrictRepository districtRepository)
+        public WardService(
+            IWardRepository WardRepository,
+            IValidator<WardModel> WardValidator,
+            IDistrictRepository districtRepository,
+            IMapper mapper)
         {
             _wardRepository = WardRepository;
             _wardValidator = WardValidator;
             _districtRepository = districtRepository;
+            _mapper = mapper;
         }
 
-        public async Task<ValidationResult> ValidateWard(Ward ward)
+        public async Task<ValidationResult> ValidateWard(WardModel ward)
         {
             var validationResult = await _wardValidator.ValidateAsync(ward);
             var isAnyDistrict = await _districtRepository.IsAnyDistrict(ward.DistrictId);
@@ -34,26 +42,35 @@ namespace EmployeeManagement.Services
             return validationResult;
         }
 
-        public async Task<ValidationResult> AddAsync(Ward ward)
+        public async Task<ValidationResult> AddAsync(WardModel wardModel)
         {
-            var validationResult = await ValidateWard(ward);
+            var validationResult = await ValidateWard(wardModel);
             if (!validationResult.IsValid)
             {
                 return validationResult;
             }
+            var ward = _mapper.Map<Ward>(wardModel);
             await _wardRepository.AddAsync(ward);
             await _wardRepository.SaveAsync();
             return validationResult;
         }
 
-        public async Task<Ward> DeleteAsync(Ward ward)
+        public async Task<ValidationResult> DeleteAsync(WardModel wardModel)
         {
+            var ward = await _wardRepository.GetAsync(w => w.WardId == wardModel.WardId);
+            var validationResult = new ValidationResult();
+            if (ward == null)
+            {
+                validationResult.Errors.Add(new ValidationFailure("Ward", SD.ValidationMessages.WardMessage.NotFound));
+                return validationResult;
+            }
             _wardRepository.Delete(ward);
             await _wardRepository.SaveAsync();
-            return ward;
+            return validationResult;
         }
 
-        public async Task<IEnumerable<Ward>> GetAllAsync(Filter filter = null)
+
+        public IQueryable<Ward> GetAllIncludeCityDistrictName()
         {
             var wards = _wardRepository.GetAllAsync().Select(d => new Ward
             {
@@ -68,6 +85,11 @@ namespace EmployeeManagement.Services
                     }
                 }
             });
+            return wards;
+        }
+
+        public async Task<IEnumerable<Ward>> FilterWard(IQueryable<Ward> wards, Filter? filter = null)
+        {
             if (filter == null)
             {
                 return await wards.ToArrayAsync();
@@ -81,26 +103,53 @@ namespace EmployeeManagement.Services
                 .ToArrayAsync();
         }
 
-        public async Task<IEnumerable<Ward>> GetAllAsync(int districtId)
+        public async Task<IEnumerable<WardModel>> GetAllFilterAsync(Filter? filter = null)
         {
-            return await _wardRepository.GetAllAsync().Where(e => e.DistrictId == districtId).ToArrayAsync();
+            var wards = GetAllIncludeCityDistrictName();
+
+            var filteredWard = await FilterWard(wards, filter);
+            return _mapper.Map<IEnumerable<WardModel>>(filteredWard);
         }
 
-        public async Task<Ward> GetByIdAsync(int id)
+        public async Task<IEnumerable<WardModel>> GetAllAsync(int districtId)
         {
-            return await _wardRepository.GetAsync(e => e.WardId == id, includeProperties: "District");
+            var wards = await _wardRepository.GetAllAsync().Where(e => e.DistrictId == districtId).ToArrayAsync();
+            return _mapper.Map<IEnumerable<WardModel>>(wards);
         }
 
-        public async Task<ValidationResult> UpdateAsync(Ward ward)
+        public async Task<WardModel> GetByIdAsync(int id)
         {
-            var validationResult = await ValidateWard(ward);
+            var ward = await _wardRepository.GetAsync(e => e.WardId == id, includeProperties: "District");
+            return _mapper.Map<WardModel>(ward);
+        }
+
+        public async Task<ValidationResult> UpdateAsync(WardModel wardModel)
+        {
+            var validationResult = await ValidateWard(wardModel);
+            var ward = await _wardRepository.GetAsync(d => d.WardId == wardModel.WardId);
+            if (ward == null)
+            {
+                validationResult.Errors.Add(new ValidationFailure("Ward", SD.ValidationMessages.WardMessage.NotFound));
+                return validationResult;
+            }
             if (!validationResult.IsValid)
             {
                 return validationResult;
             }
+            _mapper.Map(wardModel, ward);
             _wardRepository.Update(ward);
             await _wardRepository.SaveAsync();
             return validationResult;
+        }
+
+        public async Task<IEnumerable<WardModel>> GetAllAsync()
+        {
+            var wards = await _wardRepository
+                .GetAllAsync()
+                .Include(w => w.District)
+                    .ThenInclude(w => w.City)
+                .ToArrayAsync();
+            return _mapper.Map<IEnumerable<WardModel>>(wards);
         }
     }
 }
